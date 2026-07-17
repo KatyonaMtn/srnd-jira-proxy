@@ -16,6 +16,10 @@
     --done:   #5f8f73; --done-bg:   #e7efe9;
     --backlog:  #6b7a99; --backlog-bg:  #eaeef6;
     --archived: #969db0; --archived-bg: #eef0f3;
+    --tracking: #0e9aa7; --tracking-bg: #dcf1f3;
+    --undone:   #d9822b; --undone-bg:   #f7ecd9;
+    --useful:   #6a9a4a; --useful-bg:   #e8f1de;
+    --drop:     #a86e6e; --drop-bg:     #f1e6e6;
 
     --ok: #2fb27a;
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -219,6 +223,7 @@
   .card.done .card-title { text-decoration: line-through; color: var(--muted); }
   .card.st-done .card-title { text-decoration: line-through; color: var(--muted); }
   .card.st-archived .card-title { text-decoration: line-through; color: var(--muted); }
+  .card.st-drop .card-title { text-decoration: line-through; color: var(--muted); }
 
   /* Today — головне на зараз: легкий зеленуватий фон */
   .card.st-today {
@@ -273,6 +278,10 @@
   .pill.st-done   { background: var(--done-bg);   color: var(--done); }
   .pill.st-backlog  { background: var(--backlog-bg);  color: var(--backlog); }
   .pill.st-archived { background: var(--archived-bg); color: var(--archived); }
+  .pill.st-tracking { background: var(--tracking-bg); color: var(--tracking); }
+  .pill.st-undone   { background: var(--undone-bg);   color: var(--undone); }
+  .pill.st-useful   { background: var(--useful-bg);   color: var(--useful); }
+  .pill.st-drop     { background: var(--drop-bg);     color: var(--drop); }
 
   .pill.pill-btn { border: none; cursor: pointer; font-family: inherit; line-height: 1.1; }
   .pill.pill-btn::after { content: "▾"; margin-left: 4px; opacity: .55; font-size: 9px; }
@@ -458,6 +467,10 @@
       </div>
       <div class="tools">
         <span class="sp-total" id="sptotal" title="Сума Story Points видимих задач (керується мультиселектором статусів)"></span>
+        <select class="filter" id="sortMode" title="Сортування задач">
+          <option value="stage">Сорт: стадія</option>
+          <option value="priority">Сорт: пріоритет</option>
+        </select>
         <div class="stage-toggles" id="stageToggles"></div>
         <button class="reset" id="refresh" type="button" title="Оновити з Jira">🔄</button>
         <button class="reset" id="reset" type="button">↺ Скинути</button>
@@ -499,12 +512,17 @@
     { key: "backlog",  label: "Backlog",  order: 0 },
     { key: "sprint",   label: "Sprint",   order: 1 },
     { key: "today",    label: "Today",    order: 2 },
-    { key: "add",      label: "Add",      order: 3 },
-    { key: "extra",    label: "Extra",    order: 4 },
-    { key: "done",     label: "Готово",   order: 5 },
-    { key: "archived", label: "Archived", order: 6 },
+    { key: "tracking", label: "Tracking", order: 3 },
+    { key: "add",      label: "Add",      order: 4 },
+    { key: "extra",    label: "Extra",    order: 5 },
+    { key: "undone",   label: "Undone",   order: 6 },
+    { key: "done",     label: "Готово",   order: 7 },
+    { key: "useful",   label: "Useful",   order: 8 },
+    { key: "drop",     label: "Drop",     order: 9 },
+    { key: "archived", label: "Archived", order: 10 },
   ];
   const STAGE_ORDER = Object.fromEntries(STAGES.map(s => [s.key, s.order]));
+  const PRIO_RANK = { Highest: 0, High: 1, Medium: 2, Low: 3, Lowest: 4 };
   const stageLabel = k => (STAGES.find(s => s.key === k) || {}).label || k;
 
   const PEOPLE = {
@@ -543,10 +561,11 @@
   let taskSeq = 0;
   let query = "";
   let selOwners = new Set(); // порожньо = усі
+  let sortMode = "stage";
   let stickersReady = false;
   const K = new URLSearchParams(location.search).get("k") || "";
   const SYNC = { url: "", secret: K };
-  const STAGE_JIRA = { backlog: "Backlog", sprint: "Sprint", today: "Today", add: "Add", extra: "Extra", done: "Готово", archived: "Archived" };
+  const STAGE_JIRA = { backlog: "Backlog", sprint: "Sprint", today: "Today", tracking: "Tracking", add: "Add", extra: "Extra", undone: "Undone", done: "Готово", useful: "Useful materials", drop: "Drop", archived: "Archived" };
   const SYNC_ON = !!K;
 
   const HIDE_KEY = "srnd-board-hidden-v1";
@@ -565,9 +584,11 @@
     return true;
   }
   function visibleTasks(g) {
-    return g.tasks.filter(matches).slice().sort((a, b) =>
-      (STAGE_ORDER[a.stage] - STAGE_ORDER[b.stage]) ||
-      (a.who || "￿").localeCompare(b.who || "￿", "uk"));
+    const byPrio = (a, b) => ((PRIO_RANK[a.prio] ?? 9) - (PRIO_RANK[b.prio] ?? 9));
+    return g.tasks.filter(matches).slice().sort((a, b) => {
+      if (sortMode === "priority") return byPrio(a, b) || (STAGE_ORDER[a.stage] - STAGE_ORDER[b.stage]);
+      return (STAGE_ORDER[a.stage] - STAGE_ORDER[b.stage]) || (a.who || "￿").localeCompare(b.who || "￿", "uk");
+    });
   }
 
   // ---- render ----
@@ -690,7 +711,7 @@
   buildPeople();
 
   // stage visibility toggles (сховати/показати статуси, напр. «Готово»)
-  const STAGE_COLOR = { backlog: "#6b7a99", sprint: "#5b57e0", today: "#12a08f", add: "#c98a1e", extra: "#7b8290", done: "#5f8f73", archived: "#969db0" };
+  const STAGE_COLOR = { backlog: "#6b7a99", sprint: "#5b57e0", today: "#12a08f", tracking: "#0e9aa7", add: "#c98a1e", extra: "#7b8290", undone: "#d9822b", done: "#5f8f73", useful: "#6a9a4a", drop: "#a86e6e", archived: "#969db0" };
   const stageBar = document.getElementById("stageToggles");
   function stageCount(key) { let n = 0; GOALS.forEach(g => g.tasks.forEach(t => { if (t.stage === key) n++; })); return n; }
   function buildStageToggles() {
@@ -740,6 +761,7 @@
 
   // ---- controls ----
   document.getElementById("search").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById("sortMode").addEventListener("change", e => { sortMode = e.target.value; render(); });
   document.getElementById("reset").addEventListener("click", () => {
     query = ""; selOwners.clear();
     hiddenStages = new Set(); saveHidden();

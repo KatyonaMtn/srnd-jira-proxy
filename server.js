@@ -26,7 +26,7 @@ const REPORTERS = [
 ];
 const JQL = `project = SRND AND reporter IN (${REPORTERS.join(", ")}) AND "Products[Dropdown]" = Marketing ORDER BY parent ASC, status ASC, updated DESC`;
 const FIELDS = "summary,status,assignee,parent,priority,customfield_12903,customfield_12763";
-const STAGE = { Sprint: "sprint", Today: "today", Add: "add", Extra: "extra", "Готово": "done", Backlog: "backlog", Archived: "archived", Tracking: "tracking", Drop: "archived", Undone: "add", "Useful materials": "archived" };
+const STAGE = { Sprint: "sprint", Today: "today", Add: "add", Extra: "extra", "Готово": "done", Backlog: "backlog", Archived: "archived", Tracking: "tracking", Drop: "drop", Undone: "undone", "Useful materials": "useful" };
 
 function cors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
