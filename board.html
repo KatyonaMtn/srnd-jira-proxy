@@ -209,25 +209,9 @@
   .card:hover { border-color: #e9ebf3; box-shadow: 0 3px 6px rgba(45,50,80,.08), 0 14px 30px -18px rgba(45,50,80,.55); }
   .card:active { cursor: grabbing; }
   .card.dragging { opacity: .4; }
-  .card.done { opacity: .6; }
+  /* Готово / Archived / done — тільки закреслення, без прозорості */
   .card.done .card-title { text-decoration: line-through; color: var(--muted); }
-
-  /* Sprint — приглушено, наполовину прозоро (відходить на фон) */
-  .card.st-sprint { opacity: .55; }
-  .card.st-sprint:hover { opacity: 1; }
-
-  /* Готово — виконано: приглушено + закреслено */
-  .card.st-done { opacity: .5; }
-  .card.st-done:hover { opacity: .85; }
   .card.st-done .card-title { text-decoration: line-through; color: var(--muted); }
-
-  /* Backlog — майбутнє, ще не в роботі: нейтрально-приглушено */
-  .card.st-backlog { opacity: .72; }
-  .card.st-backlog:hover { opacity: 1; }
-
-  /* Archived — в архіві: сильно приглушено + закреслено */
-  .card.st-archived { opacity: .42; }
-  .card.st-archived:hover { opacity: .8; }
   .card.st-archived .card-title { text-decoration: line-through; color: var(--muted); }
 
   /* Today — головне на зараз: легкий зеленуватий фон */
