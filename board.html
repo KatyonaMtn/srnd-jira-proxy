@@ -1,0 +1,1138 @@
+<meta charset="utf-8">
+<title>Цілі та задачі — SRND</title>
+<style>
+  :root {
+    --ink: #2b3040;
+    --muted: #7b8398;
+    --faint: #a6adbe;
+    --line: #e7e9f0;
+    --line-soft: #eef0f5;
+    --card: #ffffff;
+
+    --sprint: #5b57e0; --sprint-bg: #ecebfb;
+    --today:  #12a08f; --today-bg:  #dcf4ef;
+    --add:    #c98a1e; --add-bg:    #f7eed8;
+    --extra:  #7b8290; --extra-bg:  #e9ebf0;
+    --done:   #5f8f73; --done-bg:   #e7efe9;
+    --backlog:  #6b7a99; --backlog-bg:  #eaeef6;
+    --archived: #969db0; --archived-bg: #eef0f3;
+
+    --ok: #2fb27a;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; position: relative; color: var(--ink);
+    font-family: var(--font); -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(1100px 520px at 12% -8%, #eef0ff 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #f6eefb 0%, transparent 55%),
+      #eaeef8;
+    min-height: 100vh;
+  }
+
+  .page { padding: 22px 22px 80px; }
+  .app {
+    max-width: none; margin: 0;
+    background: #fff; border-radius: 26px;
+    box-shadow: 0 30px 70px -40px rgba(45,50,80,.4), 0 2px 0 rgba(45,50,80,.02);
+    padding: 26px 26px 30px;
+  }
+
+  /* ---- app header ---- */
+  .app-head { display: flex; align-items: center; gap: 16px; }
+  .proj { display: flex; align-items: center; gap: 9px; }
+  .proj h1 {
+    font-size: 22px; font-weight: 750; letter-spacing: -.02em; margin: 0;
+  }
+  .proj .chev { color: var(--faint); font-size: 15px; }
+
+  .team { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .add-member {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 650; color: var(--muted);
+    background: none; border: none; cursor: pointer;
+  }
+  .add-member .plus {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px dashed #c4cad8;
+    display: grid; place-items: center; color: var(--muted); font-size: 16px;
+  }
+  .add-member:hover { color: var(--ink); }
+  .avstack { display: flex; align-items: center; }
+  .avstack .av { margin-left: -9px; border: 2px solid #fff; }
+  .avstack .av:first-child { margin-left: 0; }
+  .avstack .count {
+    margin-left: -9px; width: 30px; height: 30px; border-radius: 50%;
+    background: #eef0f6; border: 2px solid #fff; color: var(--muted);
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .av {
+    width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    color: #fff; font-size: 11px; font-weight: 700; flex: 0 0 auto;
+  }
+
+  /* ---- toolbar ---- */
+  .toolbar {
+    display: flex; align-items: center; gap: 12px; margin: 20px 0 22px;
+  }
+  .search {
+    position: relative; flex: 0 1 340px;
+  }
+  .search input {
+    width: 100%; font: inherit; font-size: 13.5px; color: var(--ink);
+    padding: 11px 14px 11px 38px; border-radius: 12px;
+    border: 1px solid var(--line); background: #fafbfd; outline: none;
+  }
+  .search input::placeholder { color: var(--faint); }
+  .search input:focus { border-color: #c7cdf5; background: #fff; box-shadow: 0 0 0 3px #edeefc; }
+  .search .ic {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    color: var(--faint); font-size: 14px;
+  }
+  .tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .filter {
+    font: inherit; font-size: 13px; font-weight: 600; color: var(--ink);
+    padding: 9px 12px; border-radius: 11px; border: 1px solid var(--line);
+    background: #fff; cursor: pointer; outline: none;
+  }
+  .filter:focus { border-color: #c7cdf5; box-shadow: 0 0 0 3px #edeefc; }
+  .reset {
+    font: inherit; font-size: 13px; color: var(--muted);
+    background: #fff; border: 1px solid var(--line); border-radius: 11px;
+    padding: 9px 12px; cursor: pointer;
+  }
+  .reset:hover { border-color: #cdd2e0; color: var(--ink); }
+  .reset:focus-visible { outline: 2px solid var(--sprint); outline-offset: 2px; }
+
+  /* ---- stage toggles ---- */
+  .stage-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+  .stg-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: inherit; font-size: 12px; font-weight: 650; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 12px; cursor: pointer;
+    transition: color .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .stg-toggle .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .stg-toggle:hover { border-color: #cdd2e0; }
+  .stg-toggle.off { color: var(--faint); background: #f5f6f9; text-decoration: line-through; }
+  .stg-toggle.off .dot { opacity: .3; }
+  .stg-toggle .badge { font-size: 10.5px; font-weight: 700; opacity: .55; font-variant-numeric: tabular-nums; }
+
+  /* ---- people filter pills ---- */
+  .people {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px;
+    align-items: center;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    font: inherit; font-size: 12.5px; font-weight: 620; color: var(--muted);
+    background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    padding: 4px 13px 4px 5px; cursor: pointer;
+    transition: border-color .12s ease, background .12s ease, color .12s ease;
+  }
+  .chip.all { padding: 6px 15px; font-weight: 700; }
+  .chip .av { width: 24px; height: 24px; font-size: 9px; }
+  .chip:hover { border-color: #cdd2e0; color: var(--ink); }
+  .chip.active { background: var(--sprint); border-color: var(--sprint); color: #fff; }
+  .chip.active .av { box-shadow: 0 0 0 2px rgba(255,255,255,.55); }
+  .chip .badge {
+    font-size: 10.5px; font-weight: 700; color: inherit; opacity: .7;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- board ---- */
+  .board {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 355px;
+    gap: 18px; overflow-x: auto; padding: 4px 2px 20px;
+    scroll-snap-type: x proximity;
+  }
+  .board::-webkit-scrollbar { height: 10px; }
+  .board::-webkit-scrollbar-thumb { background: #d3d8e6; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+
+  .col {
+    scroll-snap-align: start;
+    background: var(--tint, #f4f5f9);
+    border-radius: 18px; padding: 8px 8px 10px;
+    display: flex; flex-direction: column;
+    --accent: #8a93a3; --accenttext: #6a7180; --head: #eef0f4;
+  }
+  .col-head {
+    display: flex; align-items: flex-start; gap: 9px;
+    padding: 11px 10px 12px; cursor: grab;
+    border-radius: 13px;
+  }
+  .col-head:active { cursor: grabbing; }
+  .col.dragging { opacity: .45; }
+  .col.drop-before { box-shadow: -4px 0 0 -1px var(--accent); }
+  .col.drop-after  { box-shadow: 4px 0 0 -1px var(--accent); }
+
+  .col .count {
+    width: 22px; height: 22px; border-radius: 7px; flex: 0 0 auto;
+    background: #fff; color: var(--accenttext); display: grid; place-items: center;
+    font-size: 12px; font-weight: 750; font-variant-numeric: tabular-nums;
+    box-shadow: 0 1px 2px rgba(45,50,80,.08);
+  }
+  .col-title {
+    flex: 1; min-width: 0;
+    font-size: 15px; font-weight: 720; color: var(--accenttext);
+    letter-spacing: -.01em; line-height: 1.25; text-wrap: balance;
+    padding-top: 1px;
+  }
+  .col-id {
+    font-size: 10.5px; font-weight: 700; color: var(--accent); opacity: .8;
+    background: #fff; border-radius: 999px; padding: 2px 7px;
+    font-variant-numeric: tabular-nums; flex: 0 0 auto;
+  }
+  .col-add {
+    margin-left: auto; width: 26px; height: 26px; flex: 0 0 auto;
+    border: none; background: #fff; color: var(--accenttext);
+    border-radius: 8px; font-size: 17px; line-height: 1; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(45,50,80,.08);
+  }
+  .col-add:hover { color: var(--accent); }
+
+  .col-body {
+    display: flex; flex-direction: column; gap: 7px;
+    padding: 2px 4px 4px; min-height: 30px;
+  }
+  .col.drop-into .col-body { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 14px; }
+
+  /* ---- card ---- */
+  .card {
+    background: var(--card); border-radius: 14px; padding: 11px 12px 10px;
+    box-shadow: 0 1px 2px rgba(45,50,80,.06), 0 8px 20px -16px rgba(45,50,80,.4);
+    cursor: grab; position: relative; border: 1px solid transparent;
+    transition: box-shadow .14s ease, transform .1s ease, border-color .14s ease;
+  }
+  .card:hover { border-color: #e9ebf3; box-shadow: 0 3px 6px rgba(45,50,80,.08), 0 14px 30px -18px rgba(45,50,80,.55); }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: .4; }
+  .card.done { opacity: .6; }
+  .card.done .card-title { text-decoration: line-through; color: var(--muted); }
+
+  /* Sprint — приглушено, наполовину прозоро (відходить на фон) */
+  .card.st-sprint { opacity: .55; }
+  .card.st-sprint:hover { opacity: 1; }
+
+  /* Готово — виконано: приглушено + закреслено */
+  .card.st-done { opacity: .5; }
+  .card.st-done:hover { opacity: .85; }
+  .card.st-done .card-title { text-decoration: line-through; color: var(--muted); }
+
+  /* Backlog — майбутнє, ще не в роботі: нейтрально-приглушено */
+  .card.st-backlog { opacity: .72; }
+  .card.st-backlog:hover { opacity: 1; }
+
+  /* Archived — в архіві: сильно приглушено + закреслено */
+  .card.st-archived { opacity: .42; }
+  .card.st-archived:hover { opacity: .8; }
+  .card.st-archived .card-title { text-decoration: line-through; color: var(--muted); }
+
+  /* Today — головне на зараз: легкий зеленуватий фон */
+  .card.st-today {
+    background: #e7f7f1;
+    border-color: #c1e6db;
+    box-shadow: 0 1px 2px rgba(18,160,143,.08), 0 8px 20px -16px rgba(18,160,143,.4);
+  }
+  .card.st-today:hover { border-color: #9dd8c8; box-shadow: 0 3px 6px rgba(18,160,143,.14), 0 14px 30px -18px rgba(18,160,143,.5); }
+
+  .card-top { display: flex; align-items: flex-start; gap: 9px; }
+  .card-title { font-size: 13.5px; font-weight: 600; line-height: 1.32; flex: 1; }
+  .check {
+    flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #d7dbe6; background: #fff; color: transparent;
+    font-size: 12px; font-weight: 800; cursor: pointer; margin-top: 1px;
+    display: grid; place-items: center; transition: all .12s ease;
+  }
+  .check:hover { border-color: var(--accent); color: #cfd4e0; }
+  .check.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+
+  .card-line { display: flex; align-items: center; gap: 7px; margin-top: 9px; }
+  .card-line .av { width: 20px; height: 20px; font-size: 8.5px; }
+  .card-line .av.none { background: #fff; color: var(--faint); border: 1px dashed #cdd2df; }
+  .card-line .who {
+    font-size: 12px; color: var(--muted); font-weight: 550;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  .card-line .who.none { font-style: italic; color: var(--faint); }
+  .card-line .mar {
+    flex: 0 0 auto; font-size: 10px; font-weight: 750; letter-spacing: .02em;
+    color: var(--muted); background: #fff; border: 1px solid var(--line);
+    border-radius: 999px; padding: 2px 7px;
+  }
+  .card-line .mar b { color: var(--ink); font-weight: 800; }
+  .card-line .sp {
+    flex: 0 0 auto; margin-left: auto; font-size: 10.5px; font-weight: 800;
+    color: var(--sprint); background: #eeecfb; border-radius: 6px; padding: 2px 7px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pill { flex: 0 0 auto; }
+  .pill {
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    letter-spacing: .01em;
+  }
+  .pill.st-sprint { background: var(--sprint-bg); color: var(--sprint); }
+  .pill.st-today  { background: var(--today-bg);  color: var(--today); }
+  .pill.st-add    { background: var(--add-bg);    color: var(--add); }
+  .pill.st-extra  { background: var(--extra-bg);  color: var(--extra); }
+  .pill.st-done   { background: var(--done-bg);   color: var(--done); }
+  .pill.st-backlog  { background: var(--backlog-bg);  color: var(--backlog); }
+  .pill.st-archived { background: var(--archived-bg); color: var(--archived); }
+
+  .pill.pill-btn { border: none; cursor: pointer; font-family: inherit; line-height: 1.1; }
+  .pill.pill-btn::after { content: "▾"; margin-left: 4px; opacity: .55; font-size: 9px; }
+  .pill.pill-btn:hover { filter: brightness(.96); }
+
+  .status-menu {
+    position: fixed; z-index: 80; background: #fff; border: 1px solid var(--line);
+    border-radius: 12px; padding: 6px; display: flex; flex-direction: column; gap: 2px;
+    min-width: 150px; box-shadow: 0 18px 40px -14px rgba(45,50,80,.5);
+  }
+  .status-menu button {
+    display: flex; align-items: center; gap: 9px; font: inherit; font-size: 12.5px;
+    font-weight: 600; color: var(--ink); border: none; background: transparent;
+    border-radius: 8px; padding: 8px 10px; cursor: pointer; text-align: left;
+  }
+  .status-menu button:hover { background: #f2f3f7; }
+  .status-menu button .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .status-menu button .chk { margin-left: auto; color: var(--ok); font-weight: 800; }
+  .status-menu button.cur { font-weight: 800; }
+  .status-menu button:disabled { opacity: .38; cursor: default; }
+  .status-menu button.na { text-decoration: line-through; }
+  .status-menu button.busy { opacity: .6; }
+
+  #toast {
+    position: fixed; left: 50%; top: 16px; transform: translateX(-50%) translateY(-16px);
+    z-index: 130; background: var(--ink); color: #fff; font-size: 13px; font-weight: 650;
+    padding: 10px 16px; border-radius: 12px; box-shadow: 0 14px 34px -10px rgba(0,0,0,.5);
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+    max-width: 80vw;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.ok { background: #1f7a52; }
+  #toast.err { background: #b3261e; }
+  .card-foot .tid {
+    margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .add-task {
+    margin-top: 2px; width: 100%; padding: 11px; border-radius: 12px;
+    border: 1.5px dashed var(--accent); background: transparent;
+    color: var(--accenttext); font: inherit; font-size: 13px; font-weight: 650;
+    cursor: pointer; opacity: .85; display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .add-task:hover { opacity: 1; background: rgba(255,255,255,.5); }
+
+  /* ---- stickers (FigJam-style) ---- */
+  .sticker {
+    position: absolute; z-index: 50; font-size: 40px; line-height: 1;
+    cursor: grab; user-select: none; touch-action: none;
+    transform: translate(-50%, -50%);
+    /* die-cut білий контур по формі емодзі + мʼяка тінь */
+    filter:
+      drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+      drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+      drop-shadow(1.5px 1.5px 0 #fff) drop-shadow(-1.5px 1.5px 0 #fff)
+      drop-shadow(1.5px -1.5px 0 #fff) drop-shadow(-1.5px -1.5px 0 #fff)
+      drop-shadow(0 5px 5px rgba(30,34,50,.34));
+    transition: transform .06s ease;
+  }
+  .sticker:active { cursor: grabbing; }
+  .sticker:hover { transform: translate(-50%, -50%) scale(1.06); }
+  .sticker.dragging { transition: none; }
+  .sticker .del {
+    position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+    border-radius: 50%; background: #e5484d; color: #fff; border: 2px solid #fff;
+    font: 700 11px/1 var(--font); display: none; place-items: center; cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  .sticker:hover .del { display: grid; }
+
+  .stk-ghost {
+    position: fixed; z-index: 90; pointer-events: none; font-size: 40px; line-height: 1;
+    opacity: .75; display: none; transform: translate(-50%, -50%);
+    filter:
+      drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+      drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+      drop-shadow(0 4px 4px rgba(30,34,50,.3));
+  }
+  body.arming { cursor: none; }
+  body.arming .card, body.arming .col-head { cursor: none; }
+
+  .stk-tool {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    z-index: 70; display: flex; align-items: center; gap: 4px;
+    background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 6px;
+    box-shadow: 0 16px 36px -14px rgba(45,50,80,.45);
+  }
+  .stk-toggle {
+    width: 46px; height: 42px; border: none; border-radius: 12px; background: transparent;
+    font-size: 21px; cursor: pointer; display: grid; place-items: center; transition: background .12s ease;
+  }
+  .stk-toggle:hover { background: #f0edfd; }
+  .stk-toggle.active { background: var(--sprint); }
+  .palette {
+    position: fixed; left: 50%; bottom: 78px; transform: translateX(-50%);
+    z-index: 70; background: #fff; border: 1px solid var(--line); border-radius: 18px;
+    padding: 12px; display: none; grid-template-columns: repeat(8, 1fr); gap: 2px;
+    max-width: min(94vw, 430px); box-shadow: 0 20px 44px -16px rgba(45,50,80,.5);
+  }
+  .palette.open { display: grid; }
+  .palette button {
+    width: 44px; height: 44px; font-size: 24px; border: none; background: transparent;
+    border-radius: 11px; cursor: pointer; display: grid; place-items: center; transition: background .1s ease;
+  }
+  .palette button:hover { background: #f0edfd; }
+  .palette button.armed { background: #f0edfd; box-shadow: inset 0 0 0 2px var(--sprint); }
+
+  /* ---- wheel of fortune ---- */
+  .wheel-launch {
+    position: fixed; right: 22px; bottom: 22px; z-index: 70;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 10px 15px; font: inherit; font-size: 13px; font-weight: 750; color: var(--ink);
+    cursor: pointer; box-shadow: 0 16px 36px -14px rgba(45,50,80,.45);
+  }
+  .wheel-launch:hover { border-color: #cdd2e0; }
+  .wheel-panel {
+    position: fixed; right: 22px; bottom: 76px; z-index: 71; width: 320px;
+    background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 16px;
+    box-shadow: 0 26px 60px -20px rgba(45,50,80,.5); display: none;
+  }
+  .wheel-panel.open { display: block; }
+  .wheel-head { display: flex; align-items: center; font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+  .wheel-head .x { margin-left: auto; border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); }
+  .wheel-stage { position: relative; width: 280px; height: 280px; margin: 0 auto; }
+  .wheel-pointer {
+    position: absolute; top: -3px; left: 50%; transform: translateX(-50%); z-index: 2;
+    width: 0; height: 0; border-left: 11px solid transparent; border-right: 11px solid transparent;
+    border-top: 18px solid var(--ink); filter: drop-shadow(0 2px 2px rgba(0,0,0,.28));
+  }
+  .wheel-svg { width: 280px; height: 280px; transition: transform 4.2s cubic-bezier(.15,.85,.28,1); }
+  .wheel-svg.no-anim { transition: none; }
+  .wheel-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;
+    width: 54px; height: 54px; border-radius: 50%; background: #fff; border: 1px solid var(--line);
+    display: grid; place-items: center; font: inherit; font-size: 10px; font-weight: 800;
+    letter-spacing: .05em; color: var(--sprint); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.14);
+  }
+  .wheel-center:hover { color: var(--ink); }
+  .wheel-result { text-align: center; margin-top: 14px; min-height: 30px; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 9px; }
+  .wheel-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .wheel-actions button { flex: 1; font: inherit; font-size: 13px; font-weight: 700; border-radius: 11px; padding: 10px; cursor: pointer; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+  .wheel-actions .spin { background: linear-gradient(135deg, #8a5cff, #5b57e0); border: none; color: #fff; box-shadow: 0 8px 18px -7px rgba(91,87,224,.75); }
+  .wheel-actions .spin:hover:not(:disabled) { filter: brightness(1.05); }
+  .wheel-actions button:disabled { opacity: .5; cursor: default; box-shadow: none; }
+  .wheel-picked { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+  .wheel-picked .p { font-size: 11px; font-weight: 600; color: var(--faint); background: #f4f5f9; border-radius: 999px; padding: 3px 9px; }
+
+  .wheel-svg { filter: drop-shadow(0 10px 22px rgba(45,50,80,.28)); }
+  .wheel-launch { background: linear-gradient(135deg, #fff, #f4f2ff); }
+  .wheel-center { animation: wheelpulse 2.4s ease-in-out infinite; }
+  @keyframes wheelpulse { 0%,100% { box-shadow: 0 2px 8px rgba(0,0,0,.14); } 50% { box-shadow: 0 2px 8px rgba(0,0,0,.14), 0 0 0 6px rgba(124,92,255,.14); } }
+  .wheel-result.pop { animation: wheelpop .5s cubic-bezier(.2,.9,.3,1.3); }
+  @keyframes wheelpop { 0% { transform: scale(.6); opacity: 0; } 55% { transform: scale(1.14); } 100% { transform: scale(1); opacity: 1; } }
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 120; }
+  @media (prefers-reduced-motion: reduce) { .wheel-svg { transition: transform .8s ease-out; } .wheel-center { animation: none; } }
+
+  @media (max-width: 640px) {
+    .page { padding: 14px 10px 70px; }
+    .app { padding: 18px 14px 22px; border-radius: 20px; }
+    .board { grid-auto-columns: 82vw; }
+    .toolbar { flex-wrap: wrap; }
+    .search { flex-basis: 100%; }
+    .palette { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+
+<div class="page">
+  <div class="app">
+    <div class="app-head">
+      <div class="proj"><h1>SRND · Roadmap</h1><span class="chev">▾</span></div>
+      <div class="team">
+        <button class="add-member" type="button"><span class="plus">+</span>Команда</button>
+        <div class="avstack" id="team"></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search">
+        <span class="ic">⌕</span>
+        <input id="search" type="search" placeholder="Пошук задачі…" autocomplete="off">
+      </div>
+      <div class="tools">
+        <div class="stage-toggles" id="stageToggles"></div>
+        <button class="reset" id="refresh" type="button" title="Оновити з Jira">🔄</button>
+        <button class="reset" id="reset" type="button">↺ Скинути</button>
+      </div>
+    </div>
+
+    <div class="people" id="people"></div>
+
+    <div class="board" id="board"></div>
+  </div>
+</div>
+
+<div class="stk-ghost" id="ghost" aria-hidden="true"></div>
+<div class="palette" id="palette" role="menu" aria-label="Стікери"></div>
+<div class="stk-tool">
+  <button class="stk-toggle" id="stkToggle" type="button" title="Стікери" aria-label="Стікери">🙂</button>
+</div>
+
+<button class="wheel-launch" id="wheelLaunch" type="button">🎡 Who's next?</button>
+<div class="wheel-panel" id="wheelPanel">
+  <div class="wheel-head">Who's next?<button class="x" id="wheelClose" type="button" aria-label="Закрити">×</button></div>
+  <div class="wheel-stage">
+    <div class="wheel-pointer"></div>
+    <svg class="wheel-svg" id="wheelSvg" viewBox="0 0 200 200"></svg>
+    <button class="wheel-center" id="wheelCenter" type="button">SPIN</button>
+  </div>
+  <div class="wheel-result" id="wheelResult"></div>
+  <div class="wheel-actions">
+    <button class="spin" id="wheelSpin" type="button">Spin</button>
+    <button id="wheelReset" type="button">Reset</button>
+  </div>
+  <div class="wheel-picked" id="wheelPicked"></div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+  const STAGES = [
+    { key: "backlog",  label: "Backlog",  order: 0 },
+    { key: "sprint",   label: "Sprint",   order: 1 },
+    { key: "today",    label: "Today",    order: 2 },
+    { key: "add",      label: "Add",      order: 3 },
+    { key: "extra",    label: "Extra",    order: 4 },
+    { key: "done",     label: "Готово",   order: 5 },
+    { key: "archived", label: "Archived", order: 6 },
+  ];
+  const STAGE_ORDER = Object.fromEntries(STAGES.map(s => [s.key, s.order]));
+  const stageLabel = k => (STAGES.find(s => s.key === k) || {}).label || k;
+
+  const PEOPLE = {
+    "Vadym Skliarov":     { i: "VS", c: "#3b6fd4" },
+    "Anton Kruk":         { i: "AK", c: "#12a08f" },
+    "Andrii Bandura":     { i: "AB", c: "#e07b39" },
+    "Katerina Sychevska": { i: "KS", c: "#8a4fd6" },
+    "Victoria Lys":       { i: "VL", c: "#d1477e" },
+    "Vladyslav Bilotskyi":{ i: "VB", c: "#4a8f4c" },
+    "Narek Karapetyan":   { i: "NK", c: "#c0392b" },
+    "Danil Arabadzhy":    { i: "DA", c: "#2b9fb3" },
+    "Illia Kyselov":      { i: "IK", c: "#7a6f3a" },
+  };
+
+  // pastel column themes (cycled by goal order)
+  const THEMES = [
+    { tint: "#f3f0fd", head: "#ece7fb", accent: "#7c5cff", text: "#5b40d4" }, // violet
+    { tint: "#eef4ff", head: "#e4eeff", accent: "#3b82f6", text: "#2560c9" }, // blue
+    { tint: "#fdf6ea", head: "#faeed6", accent: "#e0972a", text: "#b6771a" }, // amber
+    { tint: "#fdeeee", head: "#fbe2e2", accent: "#f26d6d", text: "#d24747" }, // rose
+    { tint: "#eafaf6", head: "#dbf3ec", accent: "#14b8a6", text: "#0e9384" }, // teal
+    { tint: "#fdeef6", head: "#fbe2ef", accent: "#ec4899", text: "#c93b82" }, // pink
+    { tint: "#f2f4f8", head: "#e9ecf2", accent: "#8a93a3", text: "#69707f" }, // slate
+  ];
+
+  // ---- state + persistence ----
+  const LS_KEY = "srnd-board-v6";
+  function withUids(list) { list.forEach((g, i) => { g._uid = "g" + i; }); return list; }
+  function loadState() {
+    try { const raw = localStorage.getItem(LS_KEY); if (raw) { const a = JSON.parse(raw); if (Array.isArray(a) && a.length) return a; } } catch (e) {}
+    return null;
+  }
+  function saveState() {} // дані живуть у Jira
+
+  let GOALS = [];
+  let taskSeq = 0;
+  let query = "";
+  let selOwners = new Set(); // порожньо = усі
+  let stickersReady = false;
+  const K = new URLSearchParams(location.search).get("k") || "";
+  const SYNC = { url: "", secret: K };
+  const STAGE_JIRA = { backlog: "Backlog", sprint: "Sprint", today: "Today", add: "Add", extra: "Extra", done: "Готово", archived: "Archived" };
+  const SYNC_ON = !!K;
+
+  const HIDE_KEY = "srnd-board-hidden-v1";
+  function loadHidden() { try { return JSON.parse(localStorage.getItem(HIDE_KEY)) || []; } catch (e) { return []; } }
+  function saveHidden() { try { localStorage.setItem(HIDE_KEY, JSON.stringify([...hiddenStages])); } catch (e) {} }
+  let hiddenStages = new Set(loadHidden());
+
+  // ---- filters ----
+  function matches(t) {
+    if (hiddenStages.has(t.stage)) return false;
+    if (selOwners.size && !selOwners.has(t.who || "—")) return false;
+    if (query) {
+      const hay = (t.text + " " + t.id + " " + (t.who || "")).toLowerCase();
+      if (!hay.includes(query)) return false;
+    }
+    return true;
+  }
+  function visibleTasks(g) {
+    return g.tasks.filter(matches).slice().sort((a, b) =>
+      (STAGE_ORDER[a.stage] - STAGE_ORDER[b.stage]) ||
+      (a.who || "￿").localeCompare(b.who || "￿", "uk"));
+  }
+
+  // ---- render ----
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  const AV_COLORS = ["#3b6fd4","#12a08f","#e07b39","#8a4fd6","#d1477e","#4a8f4c","#c0392b","#2b9fb3","#7a6f3a","#5b57e0","#0e9384","#b6771a"];
+  function personOf(who) {
+    if (PEOPLE[who]) return PEOPLE[who];
+    const parts = who.trim().split(/\s+/);
+    const i = ((parts[0][0] || "") + (parts[1] ? parts[1][0] : "")).toUpperCase();
+    let h = 0; for (const ch of who) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return { i: i || "?", c: AV_COLORS[h % AV_COLORS.length] };
+  }
+  function avatar(who, cls) {
+    if (!who) return `<span class="av none ${cls || ""}">?</span>`;
+    const p = personOf(who);
+    return `<span class="av ${cls || ""}" style="background:${p.c}" title="${esc(who)}">${p.i}</span>`;
+  }
+
+  function card(t) {
+    const whoHtml = t.who
+      ? `${avatar(t.who)}<span class="who">${esc(t.who)}</span>`
+      : `${avatar(null)}<span class="who none">Не назначено</span>`;
+    return `<div class="card st-${t.stage} ${t.done ? "done" : ""}" draggable="true" data-task="${esc(t.id)}">
+      <div class="card-top">
+        <div class="card-title">${esc(t.text)}</div>
+        <button class="check ${t.done ? "on" : ""}" type="button" data-check title="Готово">✓</button>
+      </div>
+      <div class="card-line">
+        <button class="pill pill-btn st-${t.stage}" type="button" data-stage-btn title="Статус задачі">${stageLabel(t.stage)}</button>
+        ${t.mar ? `<span class="mar" title="Статус MAR">MAR·<b>${esc(t.mar)}</b></span>` : ""}
+        ${whoHtml}
+        ${t.sp != null ? `<span class="sp" title="Story Points">★ ${esc(t.sp)}</span>` : ""}
+      </div>
+    </div>`;
+  }
+
+  function column(g, idx) {
+    const th = g.none ? THEMES[6] : THEMES[idx % 6];
+    const vis = visibleTasks(g);
+    const style = `--tint:${th.tint};--accent:${th.accent};--accenttext:${th.text};--head:${th.head}`;
+    return `<div class="col" data-goal="${g._uid}" style="${style}">
+      <div class="col-head" draggable="true" data-handle title="Перетягни, щоб змінити порядок" style="background:${th.head}">
+        <span class="count">${vis.length}</span>
+        <span class="col-title">${esc(g.title)}</span>
+        <button class="col-add" type="button" data-add title="Додати задачу">+</button>
+      </div>
+      <div class="col-body">
+        ${vis.map(card).join("")}
+        <button class="add-task" type="button" data-add>+ Додати задачу</button>
+      </div>
+    </div>`;
+  }
+
+  const board = document.getElementById("board");
+  function render() {
+    board.innerHTML = GOALS.map((g, i) => column(g, i)).join("");
+    renderTeam();
+    syncPeople();
+    syncStageToggles();
+    if (stickersReady) renderStickers();
+  }
+
+  // team avatars (unique owners)
+  function renderTeam() {
+    const owners = [];
+    GOALS.forEach(g => g.tasks.forEach(t => { if (t.who && !owners.includes(t.who)) owners.push(t.who); }));
+    const shown = owners.slice(0, 5).map(w => avatar(w)).join("");
+    const extra = owners.length > 5 ? `<span class="count">+${owners.length - 5}</span>` : "";
+    document.getElementById("team").innerHTML = shown + extra +
+      `<span class="count" title="Всього людей">${owners.length}</span>`;
+  }
+
+  // people filter pills
+  const peopleBar = document.getElementById("people");
+  function taskCountFor(who) {
+    let n = 0; GOALS.forEach(g => g.tasks.forEach(t => { if ((t.who || null) === who) n++; }));
+    return n;
+  }
+  function buildPeople() {
+    const owners = new Set();
+    GOALS.forEach(g => g.tasks.forEach(t => t.who && owners.add(t.who)));
+    const list = [...owners].sort((a, b) => a.localeCompare(b, "uk"));
+    let total = 0; GOALS.forEach(g => total += g.tasks.length);
+    peopleBar.innerHTML =
+      `<button class="chip all" type="button" data-owner="all">Усі <span class="badge">${total}</span></button>` +
+      list.map(w => {
+        const p = personOf(w);
+        return `<button class="chip" type="button" data-owner="${esc(w)}">
+          <span class="av" style="background:${p.c}">${p.i}</span>${esc(w)}
+          <span class="badge">${taskCountFor(w)}</span></button>`;
+      }).join("");
+  }
+  function syncPeople() {
+    peopleBar.querySelectorAll(".chip").forEach(c => {
+      const o = c.dataset.owner;
+      c.classList.toggle("active", o === "all" ? selOwners.size === 0 : selOwners.has(o));
+    });
+  }
+  peopleBar.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    const o = b.dataset.owner;
+    if (o === "all") selOwners.clear();
+    else if (selOwners.has(o)) selOwners.delete(o);
+    else selOwners.add(o);
+    render();
+  });
+  buildPeople();
+
+  // stage visibility toggles (сховати/показати статуси, напр. «Готово»)
+  const STAGE_COLOR = { backlog: "#6b7a99", sprint: "#5b57e0", today: "#12a08f", add: "#c98a1e", extra: "#7b8290", done: "#5f8f73", archived: "#969db0" };
+  const stageBar = document.getElementById("stageToggles");
+  function stageCount(key) { let n = 0; GOALS.forEach(g => g.tasks.forEach(t => { if (t.stage === key) n++; })); return n; }
+  function buildStageToggles() {
+    stageBar.innerHTML = STAGES.filter(s => stageCount(s.key) > 0).map(s =>
+      `<button class="stg-toggle" type="button" data-stage="${s.key}" title="Показати / сховати">
+        <span class="dot" style="background:${STAGE_COLOR[s.key] || "#999"}"></span>${s.label}
+        <span class="badge">${stageCount(s.key)}</span></button>`).join("");
+  }
+  function syncStageToggles() {
+    stageBar.querySelectorAll(".stg-toggle").forEach(b =>
+      b.classList.toggle("off", hiddenStages.has(b.dataset.stage)));
+  }
+  stageBar.addEventListener("click", e => {
+    const b = e.target.closest(".stg-toggle"); if (!b) return;
+    const k = b.dataset.stage;
+    if (hiddenStages.has(k)) hiddenStages.delete(k); else hiddenStages.add(k);
+    saveHidden(); render();
+  });
+  buildStageToggles();
+
+  async function loadData() {
+    try {
+      const r = await fetch("/board-data?k=" + encodeURIComponent(K));
+      if (!r.ok) throw new Error("http " + r.status);
+      const d = await r.json();
+      GOALS = withUids(d.goals || []);
+      buildPeople(); buildStageToggles(); render();
+    } catch (e) {
+      board.innerHTML = '<div style="padding:48px 24px;color:var(--muted);font-size:14px">Не вдалося завантажити з Jira. Перевір посилання (?k=…) і спробуй ще раз.</div>';
+    }
+  }
+  document.getElementById("refresh").addEventListener("click", loadData);
+  board.innerHTML = '<div style="padding:48px 24px;color:var(--muted);font-size:14px">Завантаження з Jira…</div>';
+  loadData();
+  setInterval(() => { if (!document.hidden && !statusMenuEl) loadData(); }, 45000);
+
+  // ---- helpers ----
+  const goalByUid = uid => GOALS.find(g => g._uid === uid);
+  function findTask(tid) {
+    for (const g of GOALS) { const t = g.tasks.find(x => x.id === tid); if (t) return { g, t }; }
+    return null;
+  }
+  function clearMarks() {
+    board.querySelectorAll(".drop-into,.drop-before,.drop-after,.dragging")
+      .forEach(el => el.classList.remove("drop-into", "drop-before", "drop-after", "dragging"));
+  }
+
+  // ---- controls ----
+  document.getElementById("search").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById("reset").addEventListener("click", () => {
+    query = ""; selOwners.clear();
+    hiddenStages = new Set(); saveHidden();
+    document.getElementById("search").value = "";
+    loadData();
+  });
+
+  // check toggle + status menu + add-task (delegated)
+  board.addEventListener("click", e => {
+    const chk = e.target.closest("[data-check]");
+    if (chk) {
+      const found = findTask(chk.closest(".card").dataset.task);
+      if (found) { found.t.done = !found.t.done; saveState(); render(); }
+      return;
+    }
+    const pb = e.target.closest("[data-stage-btn]");
+    if (pb) {
+      const found = findTask(pb.closest(".card").dataset.task);
+      if (found) openStatusMenu(pb, found.t);
+      return;
+    }
+    const add = e.target.closest("[data-add]");
+    if (add) {
+      const g = goalByUid(add.closest(".col").dataset.goal);
+      const text = (prompt("Нова задача:") || "").trim();
+      if (g && text) {
+        g.tasks.push({ id: "NEW-" + (++taskSeq), stage: "today", who: null, text });
+        saveState(); render();
+      }
+    }
+  });
+
+  // ---- Jira sync ----
+
+  function toast(msg, kind) {
+    let t = document.getElementById("toast");
+    if (!t) { t = document.createElement("div"); t.id = "toast"; document.body.appendChild(t); }
+    t.textContent = msg; t.className = "show " + (kind || "");
+    clearTimeout(toast._t); toast._t = setTimeout(() => { t.className = ""; }, 3400);
+  }
+  async function fetchAllowed(key) {
+    const r = await fetch(SYNC.url + "/transitions?key=" + encodeURIComponent(key) + "&secret=" + encodeURIComponent(SYNC.secret));
+    if (!r.ok) throw new Error("transitions " + r.status);
+    const d = await r.json();
+    return new Set(d.transitions.map(t => t.to));
+  }
+  async function jiraTransition(key, stageKey) {
+    const r = await fetch(SYNC.url + "/transition", {
+      method: "POST", headers: { "Content-Type": "application/json", "X-Secret": SYNC.secret },
+      body: JSON.stringify({ key, targetStatus: STAGE_JIRA[stageKey] }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(d.error || r.status); e.data = d; throw e; }
+    return d;
+  }
+
+  // ---- status menu (змінити статус задачі → пише в Jira) ----
+  let statusMenuEl = null;
+  function closeStatusMenu() {
+    if (statusMenuEl) { statusMenuEl.remove(); statusMenuEl = null; document.removeEventListener("click", outsideStatus, true); }
+  }
+  function outsideStatus(e) { if (statusMenuEl && !statusMenuEl.contains(e.target)) closeStatusMenu(); }
+  function openStatusMenu(anchor, task) {
+    closeStatusMenu();
+    const menu = document.createElement("div");
+    menu.className = "status-menu";
+    menu.innerHTML = STAGES.map(s => {
+      const cur = s.key === task.stage;
+      return `<button type="button" data-set="${s.key}" class="${cur ? "cur" : ""}" ${SYNC_ON && !cur ? "disabled" : ""}>
+        <span class="dot" style="background:${STAGE_COLOR[s.key] || "#999"}"></span>${s.label}
+        ${cur ? '<span class="chk">✓</span>' : ""}</button>`;
+    }).join("");
+    document.body.appendChild(menu);
+    const r = anchor.getBoundingClientRect();
+    let left = r.left, top = r.bottom + 6;
+    const mr = menu.getBoundingClientRect();
+    if (left + mr.width > innerWidth - 8) left = innerWidth - 8 - mr.width;
+    if (top + mr.height > innerHeight - 8) top = r.top - 6 - mr.height;
+    menu.style.left = Math.max(8, left) + "px";
+    menu.style.top = Math.max(8, top) + "px";
+    statusMenuEl = menu;
+
+    // підтягнути дозволені переходи з Jira і активувати лише їх
+    if (SYNC_ON) {
+      fetchAllowed(task.id).then(allowed => {
+        if (statusMenuEl !== menu) return;
+        menu.querySelectorAll("[data-set]").forEach(b => {
+          if (b.dataset.set === task.stage) return;
+          const ok = allowed.has(STAGE_JIRA[b.dataset.set]);
+          b.disabled = !ok;
+          if (!ok) b.classList.add("na");
+        });
+      }).catch(() => {
+        if (statusMenuEl === menu) menu.querySelectorAll("[data-set]").forEach(b => (b.disabled = false));
+      });
+    }
+
+    menu.addEventListener("click", async ev => {
+      const b = ev.target.closest("[data-set]"); if (!b || b.disabled) return;
+      ev.stopPropagation();
+      const key = b.dataset.set;
+      if (key === task.stage) { closeStatusMenu(); return; }
+      if (!SYNC_ON) { task.stage = key; if (key === "done") task.done = false; saveState(); closeStatusMenu(); render(); return; }
+      menu.querySelectorAll("button").forEach(x => (x.disabled = true));
+      b.classList.add("busy");
+      try {
+        await jiraTransition(task.id, key);
+        task.stage = key; if (key === "done") task.done = false;
+        saveState(); closeStatusMenu(); render();
+        toast(task.id + " → " + STAGE_JIRA[key] + " ✓", "ok");
+      } catch (e) {
+        closeStatusMenu();
+        toast(e.data && e.data.error === "transition_not_available" ? "Jira не дозволяє цей перехід" : "Помилка запису в Jira", "err");
+      }
+    });
+    setTimeout(() => document.addEventListener("click", outsideStatus, true), 0);
+  }
+
+  // ---- drag & drop: tasks between goals, reorder columns ----
+  let drag = null;
+  board.addEventListener("dragstart", e => {
+    if (e.target.closest(".sticker")) { e.preventDefault(); return; }
+    const c = e.target.closest(".card");
+    const h = e.target.closest("[data-handle]");
+    if (c) { drag = { kind: "task", id: c.dataset.task }; c.classList.add("dragging"); }
+    else if (h) { const col = h.closest(".col"); drag = { kind: "col", uid: col.dataset.goal }; col.classList.add("dragging"); }
+    else return;
+    e.dataTransfer.effectAllowed = "move";
+    try { e.dataTransfer.setData("text/plain", drag.id || drag.uid); } catch (err) {}
+  });
+  board.addEventListener("dragover", e => {
+    if (!drag) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = "move";
+    const col = e.target.closest(".col");
+    board.querySelectorAll(".drop-into,.drop-before,.drop-after")
+      .forEach(el => el.classList.remove("drop-into", "drop-before", "drop-after"));
+    if (!col) return;
+    if (drag.kind === "task") {
+      const src = findTask(drag.id);
+      if (!src || src.g._uid !== col.dataset.goal) col.classList.add("drop-into");
+    } else if (drag.kind === "col" && col.dataset.goal !== drag.uid) {
+      const r = col.getBoundingClientRect();
+      col.classList.add(e.clientX > r.left + r.width / 2 ? "drop-after" : "drop-before");
+    }
+  });
+  board.addEventListener("drop", e => {
+    if (!drag) return;
+    e.preventDefault();
+    const col = e.target.closest(".col");
+    if (col) {
+      if (drag.kind === "task") {
+        const found = findTask(drag.id), dest = goalByUid(col.dataset.goal);
+        if (found && dest && found.g !== dest) {
+          found.g.tasks = found.g.tasks.filter(x => x.id !== drag.id);
+          dest.tasks.push(found.t); saveState(); render();
+        }
+      } else if (drag.kind === "col" && col.dataset.goal !== drag.uid) {
+        const r = col.getBoundingClientRect();
+        const after = e.clientX > r.left + r.width / 2;
+        const moved = GOALS.splice(GOALS.findIndex(g => g._uid === drag.uid), 1)[0];
+        const to = GOALS.findIndex(g => g._uid === col.dataset.goal);
+        GOALS.splice(after ? to + 1 : to, 0, moved); saveState(); render();
+      }
+    }
+    drag = null; clearMarks();
+  });
+  board.addEventListener("dragend", () => { drag = null; clearMarks(); });
+
+  /* =====================  СТІКЕРИ (FigJam-style)  ===================== */
+  const EMOJIS = [
+    "❤️","👍","👎","⭐","🔥","🎉","✅","⚠️",
+    "❓","💯","🚀","👀","😂","🙏","💡","📌",
+    "🐛","⏰","💪","🎯","🧠","📈","🥳","🤝",
+  ];
+  const STK_KEY = "srnd-board-stickers-v1";
+  const ghost = document.getElementById("ghost");
+  const palette = document.getElementById("palette");
+  const toggle = document.getElementById("stkToggle");
+
+  let stickers = [];
+  try { const raw = localStorage.getItem(STK_KEY); if (raw) stickers = JSON.parse(raw) || []; } catch (e) {}
+  let armed = null;
+  let seq = stickers.reduce((m, s) => Math.max(m, s.sid || 0), 0);
+
+  function saveStickers() { try { localStorage.setItem(STK_KEY, JSON.stringify(stickers)); } catch (e) {} }
+
+  palette.innerHTML = EMOJIS.map(e => `<button type="button" role="menuitem" data-emoji="${e}">${e}</button>`).join("");
+
+  function buildStickerEl(s) {
+    const el = document.createElement("div");
+    el.className = "sticker"; el.dataset.sid = s.sid; el.textContent = s.e;
+    el.setAttribute("draggable", "false");
+    const del = document.createElement("div");
+    del.className = "del"; del.textContent = "×"; del.title = "Видалити";
+    el.appendChild(del);
+    del.addEventListener("click", ev => {
+      ev.stopPropagation();
+      stickers = stickers.filter(x => x.sid !== s.sid);
+      el.remove(); saveStickers();
+    });
+    enableStickerDrag(el, s);
+    return el;
+  }
+  function enableStickerDrag(el, s) {
+    el.addEventListener("pointerdown", ev => {
+      if (ev.target.classList.contains("del")) return;
+      ev.preventDefault();
+      el.setPointerCapture(ev.pointerId);
+      el.classList.add("dragging");
+      el.style.position = "fixed"; el.style.pointerEvents = "none";
+      const move = e => { el.style.left = e.clientX + "px"; el.style.top = e.clientY + "px"; };
+      move(ev);
+      const up = e => {
+        el.releasePointerCapture(ev.pointerId);
+        el.removeEventListener("pointermove", move); el.removeEventListener("pointerup", up);
+        el.style.pointerEvents = "";
+        el.style.visibility = "hidden";
+        const under = document.elementFromPoint(e.clientX, e.clientY);
+        el.style.visibility = "";
+        const card = under && under.closest(".card");
+        if (card) {
+          const r = card.getBoundingClientRect();
+          s.card = card.dataset.task; delete s.x; delete s.y;
+          s.ox = e.clientX - r.left; s.oy = e.clientY - r.top;
+        } else {
+          delete s.card; s.x = e.clientX + scrollX; s.y = e.clientY + scrollY;
+        }
+        el.classList.remove("dragging");
+        saveStickers(); renderStickers();
+      };
+      el.addEventListener("pointermove", move); el.addEventListener("pointerup", up);
+    });
+  }
+  // перемальовує стікери: прикріплені — всередину своєї картки (їдуть разом з нею), вільні — на полотні
+  function renderStickers() {
+    document.querySelectorAll(".sticker").forEach(el => el.remove());
+    stickers.forEach(s => {
+      const el = buildStickerEl(s);
+      if (s.card != null) {
+        const card = board.querySelector('.card[data-task="' + s.card + '"]');
+        if (!card) return; // картка прихована/відфільтрована — стікер повернеться, коли вона зʼявиться
+        el.style.position = "absolute"; el.style.left = s.ox + "px"; el.style.top = s.oy + "px";
+        card.appendChild(el);
+      } else {
+        el.style.position = "absolute"; el.style.left = s.x + "px"; el.style.top = s.y + "px";
+        document.body.appendChild(el);
+      }
+    });
+  }
+  stickersReady = true;
+  renderStickers();
+
+  function setArmed(e) {
+    armed = e;
+    document.body.classList.toggle("arming", !!e);
+    toggle.classList.toggle("active", !!e);
+    ghost.textContent = e || ""; ghost.style.display = e ? "block" : "none";
+    palette.querySelectorAll("button").forEach(b => b.classList.toggle("armed", b.dataset.emoji === e));
+  }
+  toggle.addEventListener("click", ev => { ev.stopPropagation(); const open = palette.classList.toggle("open"); if (!open) setArmed(null); });
+  palette.addEventListener("click", ev => {
+    const btn = ev.target.closest("button"); if (!btn) return; ev.stopPropagation();
+    setArmed(armed === btn.dataset.emoji ? null : btn.dataset.emoji);
+  });
+  document.addEventListener("pointermove", e => { if (!armed) return; ghost.style.left = e.clientX + "px"; ghost.style.top = e.clientY + "px"; });
+  document.addEventListener("click", e => {
+    if (!armed) return;
+    if (e.target.closest(".palette, .stk-tool, .sticker, .wheel-panel, .wheel-launch, button, input, select, a")) return;
+    const card = e.target.closest(".card");
+    let s;
+    if (card) { const r = card.getBoundingClientRect(); s = { sid: ++seq, e: armed, card: card.dataset.task, ox: e.clientX - r.left, oy: e.clientY - r.top }; }
+    else { s = { sid: ++seq, e: armed, x: e.pageX, y: e.pageY }; }
+    stickers.push(s); saveStickers(); renderStickers();
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { setArmed(null); palette.classList.remove("open"); closeStatusMenu(); } });
+
+  /* =====================  КОЛЕСО «WHO'S NEXT?»  ===================== */
+  (function wheelInit() {
+    const launch = document.getElementById("wheelLaunch");
+    const panel = document.getElementById("wheelPanel");
+    const svg = document.getElementById("wheelSvg");
+    const resultEl = document.getElementById("wheelResult");
+    const pickedEl = document.getElementById("wheelPicked");
+    const spinBtn = document.getElementById("wheelSpin");
+    const resetBtn = document.getElementById("wheelReset");
+    let remaining = [], picked = [], rot = 0, spinning = false;
+
+    function allOwners() {
+      const s = new Set();
+      GOALS.forEach(g => g.tasks.forEach(t => t.who && s.add(t.who)));
+      return [...s].sort((a, b) => a.localeCompare(b, "uk"));
+    }
+    function resetWheel() {
+      remaining = allOwners(); picked = []; spinning = false;
+      rot = 0; svg.classList.add("no-anim"); svg.style.transform = "rotate(0deg)";
+      void svg.offsetWidth; svg.classList.remove("no-anim");
+      resultEl.innerHTML = ""; drawWheel(); renderPicked(); updateButtons();
+    }
+    const hx = h => { h = h.replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; };
+    const mix = (hex, to, a) => { const c = hx(hex), d = hx(to); return "#" + c.map((v, i) => Math.round(v + (d[i] - v) * a).toString(16).padStart(2, "0")).join(""); };
+    const lighten = (h, a) => mix(h, "#ffffff", a);
+    const darken = (h, a) => mix(h, "#000000", a);
+
+    function drawWheel() {
+      const n = remaining.length, cx = 100, cy = 100, r = 95, tr = 66;
+      if (n === 0) { svg.innerHTML = `<circle cx="100" cy="100" r="95" fill="#eef0f5"/>`; return; }
+      const seg = 2 * Math.PI / n;
+      let defs = "", body = "";
+      for (let i = 0; i < n; i++) {
+        const p = personOf(remaining[i]);
+        const t0 = i * seg, t1 = (i + 1) * seg, tm = (t0 + t1) / 2;
+        const xr = cx + r * Math.sin(tm), yr = cy - r * Math.cos(tm);
+        defs += `<linearGradient id="wg${i}" gradientUnits="userSpaceOnUse" x1="${cx}" y1="${cy}" x2="${xr.toFixed(1)}" y2="${yr.toFixed(1)}">
+          <stop offset="0" stop-color="${lighten(p.c, .42)}"/><stop offset="1" stop-color="${darken(p.c, .06)}"/></linearGradient>`;
+        if (n === 1) { body += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#wg0)"/>`; }
+        else {
+          const x0 = cx + r * Math.sin(t0), y0 = cy - r * Math.cos(t0);
+          const x1 = cx + r * Math.sin(t1), y1 = cy - r * Math.cos(t1);
+          const large = (t1 - t0) > Math.PI ? 1 : 0;
+          body += `<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="url(#wg${i})" stroke="#fff" stroke-width="1.5"/>`;
+        }
+        const tx = cx + tr * Math.sin(tm), ty = cy - tr * Math.cos(tm);
+        body += `<text x="${tx.toFixed(1)}" y="${(ty + 3.5).toFixed(1)}" text-anchor="middle" fill="#fff" font-size="11" font-weight="800" style="paint-order:stroke;stroke:rgba(0,0,0,.18);stroke-width:2px">${p.i}</text>`;
+      }
+      svg.innerHTML = `<defs>${defs}</defs>${body}<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#fff" stroke-width="3"/>`;
+    }
+    function renderPicked() {
+      pickedEl.innerHTML = picked.map((w, i) => `<span class="p">${i + 1}. ${esc(w)}</span>`).join("");
+    }
+    function updateButtons() {
+      spinBtn.disabled = spinning || remaining.length === 0;
+      spinBtn.textContent = remaining.length === 0 ? "Усі обрані" : (spinning ? "…" : "Spin");
+    }
+    function spin() {
+      if (spinning || remaining.length === 0) return;
+      spinning = true; updateButtons(); resultEl.innerHTML = "";
+      const n = remaining.length, seg = 360 / n;
+      const i = Math.floor(Math.random() * n);
+      const mid = (i + 0.5) * seg;
+      const current = ((rot % 360) + 360) % 360;
+      const delta = (360 - mid - current + 720) % 360;
+      rot += 360 * 5 + delta;
+      svg.style.transform = `rotate(${rot}deg)`;
+      const onEnd = () => { svg.removeEventListener("transitionend", onEnd); finish(i); };
+      svg.addEventListener("transitionend", onEnd);
+    }
+    function finish(i) {
+      const winner = remaining[i], p = personOf(winner);
+      resultEl.innerHTML = `<span class="av" style="background:${p.c};width:26px;height:26px;font-size:10px">${p.i}</span> ${esc(winner)} 🎉`;
+      resultEl.classList.remove("pop"); void resultEl.offsetWidth; resultEl.classList.add("pop");
+      const rc = svg.getBoundingClientRect();
+      fireConfetti(rc.left + rc.width / 2, rc.top + rc.height / 2);
+      picked.push(winner); remaining.splice(i, 1); spinning = false;
+      svg.classList.add("no-anim"); rot = 0; svg.style.transform = "rotate(0deg)";
+      void svg.offsetWidth; svg.classList.remove("no-anim");
+      drawWheel(); renderPicked(); updateButtons();
+    }
+
+    // ---- конфеті ----
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let confParticles = [], confRAF = null;
+    const CONF_COLORS = ["#ff5e5b", "#ffd166", "#06d6a0", "#4d96ff", "#c77dff", "#ff9f1c", "#ef476f", "#118ab2"];
+    function fireConfetti(cx, cy) {
+      if (reduce) return;
+      const canvas = document.getElementById("confetti");
+      canvas.width = innerWidth; canvas.height = innerHeight;
+      for (let i = 0; i < 130; i++) {
+        const a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 8;
+        confParticles.push({
+          x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4,
+          g: 0.12 + Math.random() * 0.08, size: 5 + Math.random() * 7,
+          color: CONF_COLORS[i % CONF_COLORS.length], rot: Math.random() * 6.28,
+          vr: (Math.random() - .5) * .4, life: 0, max: 70 + Math.random() * 45,
+          shape: Math.random() < .5 ? "r" : "c",
+        });
+      }
+      if (!confRAF) confLoop();
+    }
+    function confLoop() {
+      const canvas = document.getElementById("confetti"), ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confParticles = confParticles.filter(p => p.life < p.max);
+      for (const p of confParticles) {
+        p.life++; p.vy += p.g; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        ctx.save(); ctx.globalAlpha = Math.max(0, 1 - p.life / p.max);
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.color;
+        if (p.shape === "r") ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        else { ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, 6.28); ctx.fill(); }
+        ctx.restore();
+      }
+      if (confParticles.length) confRAF = requestAnimationFrame(confLoop);
+      else { ctx.clearRect(0, 0, canvas.width, canvas.height); confRAF = null; }
+    }
+
+    launch.addEventListener("click", () => { const open = panel.classList.toggle("open"); if (open) resetWheel(); });
+    document.getElementById("wheelClose").addEventListener("click", () => panel.classList.remove("open"));
+    document.getElementById("wheelCenter").addEventListener("click", spin);
+    spinBtn.addEventListener("click", spin);
+    resetBtn.addEventListener("click", resetWheel);
+  })();
+</script>
