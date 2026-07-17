@@ -631,7 +631,10 @@
 
   const board = document.getElementById("board");
   function render() {
-    board.innerHTML = GOALS.map((g, i) => column(g, i)).join("");
+    const filtering = selOwners.size > 0 || !!query || hiddenStages.size > 0;
+    const shown = GOALS.map((g, i) => [g, i]).filter(([g]) => !filtering || visibleTasks(g).length > 0);
+    board.innerHTML = shown.map(([g, i]) => column(g, i)).join("");
+    if (filtering && shown.length === 0) board.innerHTML = '<div style="padding:40px 24px;color:var(--faint);font-size:14px">Немає задач за цим фільтром</div>';
     renderTeam();
     syncPeople();
     syncStageToggles();
