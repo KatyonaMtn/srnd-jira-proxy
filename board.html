@@ -247,6 +247,8 @@
     border-radius: 999px; padding: 2px 7px;
   }
   .card-line .mar b { color: var(--ink); font-weight: 800; }
+  .card-line .prio { flex: 0 0 auto; margin-left: auto; font-size: 13px; font-weight: 800; line-height: 1; }
+  .card-line .prio + .sp { margin-left: 0; }
   .card-line .sp {
     flex: 0 0 auto; margin-left: auto; font-size: 10.5px; font-weight: 800;
     color: var(--sprint); background: #eeecfb; border-radius: 6px; padding: 2px 7px;
@@ -578,6 +580,10 @@
     return `<span class="av ${cls || ""}" style="background:${p.c}" title="${esc(who)}">${p.i}</span>`;
   }
 
+  const PRIO = {
+    Highest: { c: "#d1373a", i: "⏫" }, High: { c: "#e5644e", i: "↑" },
+    Medium: { c: "#c98a1e", i: "=" }, Low: { c: "#3b82f6", i: "↓" }, Lowest: { c: "#8a93a3", i: "⏬" },
+  };
   function card(t) {
     const whoHtml = t.who
       ? `${avatar(t.who)}<span class="who">${esc(t.who)}</span>`
@@ -591,6 +597,7 @@
         <button class="pill pill-btn st-${t.stage}" type="button" data-stage-btn title="Статус задачі">${stageLabel(t.stage)}</button>
         ${t.mar ? `<span class="mar" title="Статус MAR">MAR·<b>${esc(t.mar)}</b></span>` : ""}
         ${whoHtml}
+        ${t.prio ? `<span class="prio" style="color:${(PRIO[t.prio] || {}).c || "#888"}" title="Пріоритет: ${esc(t.prio)}">${(PRIO[t.prio] || {}).i || "•"}</span>` : ""}
         ${t.sp != null ? `<span class="sp" title="Story Points">★ ${esc(t.sp)}</span>` : ""}
       </div>
     </div>`;

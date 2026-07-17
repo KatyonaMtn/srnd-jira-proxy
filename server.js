@@ -24,7 +24,7 @@ const REPORTERS = [
   "712020:523d0600-c0d4-4612-80f6-5d9b4bee5770",
 ];
 const JQL = `project = SRND AND reporter IN (${REPORTERS.join(", ")}) AND "Products[Dropdown]" = Marketing ORDER BY parent ASC, status ASC, updated DESC`;
-const FIELDS = "summary,status,assignee,parent,customfield_12903,customfield_12763";
+const FIELDS = "summary,status,assignee,parent,priority,customfield_12903,customfield_12763";
 const STAGE = { Sprint: "sprint", Today: "today", Add: "add", Extra: "extra", "Готово": "done", Backlog: "backlog", Archived: "archived", Tracking: "tracking", Drop: "archived", Undone: "add", "Useful materials": "archived" };
 
 function cors(res) {
@@ -59,6 +59,7 @@ async function boardData() {
     const t = { id: it.key, text: f.summary.trim(), who: f.assignee ? f.assignee.displayName : null, stage: STAGE[f.status.name] || "add" };
     const m = marVal(f.customfield_12763); if (m) t.mar = m;
     const s = spVal(f.customfield_12903); if (s != null) t.sp = s;
+    if (f.priority && f.priority.name) t.prio = f.priority.name;
     goals.get(gk).tasks.push(t);
   }
   const ordered = [...goals.entries()].filter(([k]) => k !== NONE).map(([, v]) => v);
