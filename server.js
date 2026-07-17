@@ -22,6 +22,7 @@ const REPORTERS = [
   "712020:eee3cf39-02d2-47f2-9699-f199d4b9629f", "712020:08deb8e1-7a1f-4319-9d5a-7b981e74d4f7",
   "712020:ad2feae9-678b-4820-bf44-46585a35602b", "712020:ce8747ed-69b0-48c3-bbdf-ed1b0c18fd7c",
   "712020:523d0600-c0d4-4612-80f6-5d9b4bee5770",
+  "712020:f18cf3aa-9b75-4533-bd79-8c5f528fddac", // Anton Kruk
 ];
 const JQL = `project = SRND AND reporter IN (${REPORTERS.join(", ")}) AND "Products[Dropdown]" = Marketing ORDER BY parent ASC, status ASC, updated DESC`;
 const FIELDS = "summary,status,assignee,parent,priority,customfield_12903,customfield_12763";

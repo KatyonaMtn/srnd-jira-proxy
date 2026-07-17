@@ -105,6 +105,12 @@
   .reset:hover { border-color: #cdd2e0; color: var(--ink); }
   .reset:focus-visible { outline: 2px solid var(--sprint); outline-offset: 2px; }
 
+  .sp-total {
+    font: inherit; font-size: 12.5px; font-weight: 800; color: var(--sprint);
+    background: #eeecfb; border-radius: 11px; padding: 8px 12px;
+    font-variant-numeric: tabular-nums; white-space: nowrap; align-self: center;
+  }
+
   /* ---- stage toggles ---- */
   .stage-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
   .stg-toggle {
@@ -451,6 +457,7 @@
         <input id="search" type="search" placeholder="Пошук задачі…" autocomplete="off">
       </div>
       <div class="tools">
+        <span class="sp-total" id="sptotal" title="Сума Story Points видимих задач (керується мультиселектором статусів)"></span>
         <div class="stage-toggles" id="stageToggles"></div>
         <button class="reset" id="refresh" type="button" title="Оновити з Jira">🔄</button>
         <button class="reset" id="reset" type="button">↺ Скинути</button>
@@ -626,6 +633,10 @@
     const shown = GOALS.map((g, i) => [g, i]).filter(([g]) => !filtering || visibleTasks(g).length > 0);
     board.innerHTML = shown.map(([g, i]) => column(g, i)).join("");
     if (filtering && shown.length === 0) board.innerHTML = '<div style="padding:40px 24px;color:var(--faint);font-size:14px">Немає задач за цим фільтром</div>';
+    const vis = GOALS.flatMap(g => g.tasks).filter(matches);
+    const spSum = vis.reduce((n, t) => n + (Number(t.sp) || 0), 0);
+    const spEl = document.getElementById("sptotal");
+    if (spEl) spEl.textContent = "Σ " + spSum + " SP · " + vis.length + " зад.";
     renderTeam();
     syncPeople();
     syncStageToggles();
