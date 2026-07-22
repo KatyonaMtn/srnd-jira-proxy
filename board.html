@@ -244,27 +244,30 @@
   .check:hover { border-color: var(--accent); color: #cfd4e0; }
   .check.on { background: var(--ok); border-color: var(--ok); color: #fff; }
 
-  .card-line { display: flex; align-items: center; gap: 7px; margin-top: 9px; }
-  .card-line .av { width: 20px; height: 20px; font-size: 8.5px; }
-  .card-line .av.none { background: #fff; color: var(--faint); border: 1px dashed #cdd2df; }
-  .card-line .who {
-    font-size: 12px; color: var(--muted); font-weight: 550;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
-  }
-  .card-line .who.none { font-style: italic; color: var(--faint); }
-  .card-line .mar {
+  /* metrics row: [status] [MAR] ....... [prio] [SP] */
+  .card-meta { display: flex; align-items: center; gap: 6px; margin-top: 9px; }
+  .card-meta .spacer { flex: 1 1 auto; }
+  .card-meta .mar {
     flex: 0 0 auto; font-size: 10px; font-weight: 750; letter-spacing: .02em;
     color: var(--muted); background: #fff; border: 1px solid var(--line);
     border-radius: 999px; padding: 2px 7px;
   }
-  .card-line .mar b { color: var(--ink); font-weight: 800; }
-  .card-line .prio { flex: 0 0 auto; margin-left: auto; font-size: 13px; font-weight: 800; line-height: 1; }
-  .card-line .prio + .sp { margin-left: 0; }
-  .card-line .sp {
-    flex: 0 0 auto; margin-left: auto; font-size: 10.5px; font-weight: 800;
+  .card-meta .mar b { color: var(--ink); font-weight: 800; }
+  .card-meta .prio { flex: 0 0 auto; font-size: 13px; font-weight: 800; line-height: 1; width: 16px; text-align: center; }
+  .card-meta .sp {
+    flex: 0 0 auto; font-size: 10.5px; font-weight: 800;
     color: var(--sprint); background: #eeecfb; border-radius: 6px; padding: 2px 7px;
     font-variant-numeric: tabular-nums;
   }
+  /* owner row */
+  .card-owner { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
+  .card-owner .av { width: 20px; height: 20px; font-size: 8.5px; }
+  .card-owner .av.none { background: #fff; color: var(--faint); border: 1px dashed #cdd2df; }
+  .card-owner .who {
+    font-size: 12px; color: var(--muted); font-weight: 550;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  .card-owner .who.none { font-style: italic; color: var(--faint); }
 
   .pill { flex: 0 0 auto; }
   .pill {
@@ -652,13 +655,14 @@
         <div class="card-title">${esc(t.text)}</div>
         <button class="check ${t.done ? "on" : ""}" type="button" data-check title="Готово">✓</button>
       </div>
-      <div class="card-line">
+      <div class="card-meta">
         <button class="pill pill-btn st-${t.stage}" type="button" data-stage-btn title="Статус задачі">${stageLabel(t.stage)}</button>
         ${t.mar ? `<span class="mar" title="Статус MAR">MAR·<b>${esc(t.mar)}</b></span>` : ""}
-        ${whoHtml}
+        <span class="spacer"></span>
         ${t.prio ? `<span class="prio" style="color:${(PRIO[t.prio] || {}).c || "#888"}" title="Пріоритет: ${esc(t.prio)}">${(PRIO[t.prio] || {}).i || "•"}</span>` : ""}
         ${t.sp != null ? `<span class="sp" title="Story Points">★ ${esc(t.sp)}</span>` : ""}
       </div>
+      <div class="card-owner">${whoHtml}</div>
     </div>`;
   }
 
@@ -1114,9 +1118,12 @@
       const winner = remaining[i];
       const FILL = 26;
       const strip = [];
-      for (let k = 0; k < FILL; k++) strip.push(all[Math.floor(Math.random() * all.length)]);
+      const rand = (avoid) => { let n; do { n = all[Math.floor(Math.random() * all.length)]; } while (all.length > 1 && n === avoid); return n; };
+      let prev = null;
+      for (let k = 0; k < FILL; k++) { prev = rand(prev); strip.push(prev); }
+      if (strip[FILL - 1] === winner) strip[FILL - 1] = rand(winner); // не поруч з переможцем
       strip.push(winner);
-      strip.push(all[Math.floor(Math.random() * all.length)]);
+      strip.push(rand(winner));
       const winIdx = FILL;
       reel.classList.remove("spin");
       reel.innerHTML = strip.map(itemHtml).join("");

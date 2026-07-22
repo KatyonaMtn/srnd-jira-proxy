@@ -15,16 +15,19 @@ const {
 
 const AUTH = "Basic " + Buffer.from(`${JIRA_EMAIL}:${JIRA_TOKEN}`).toString("base64");
 
-// canonical board query (SRND · Marketing)
-const REPORTERS = [
-  "712020:13362eb4-ffd6-4b8d-b6fe-740a15ca3c05", "empty", "currentUser()",
-  "712020:489e9019-8629-424c-ac99-d25804a6fc62", "712020:af196fed-861d-4fa4-9d45-d208e49cd36c",
-  "712020:eee3cf39-02d2-47f2-9699-f199d4b9629f", "712020:08deb8e1-7a1f-4319-9d5a-7b981e74d4f7",
-  "712020:ad2feae9-678b-4820-bf44-46585a35602b", "712020:ce8747ed-69b0-48c3-bbdf-ed1b0c18fd7c",
-  "712020:523d0600-c0d4-4612-80f6-5d9b4bee5770",
+// canonical board query (SRND · Marketing) — by ASSIGNEE (whose task it is)
+const TEAM = [
+  "712020:13362eb4-ffd6-4b8d-b6fe-740a15ca3c05", // Katerina Sychevska
+  "712020:489e9019-8629-424c-ac99-d25804a6fc62", // Andrii Bandura
+  "712020:af196fed-861d-4fa4-9d45-d208e49cd36c", // Illia Kyselov
+  "712020:eee3cf39-02d2-47f2-9699-f199d4b9629f", // Narek Karapetyan
+  "712020:ad2feae9-678b-4820-bf44-46585a35602b", // Vadym Skliarov
+  "712020:ce8747ed-69b0-48c3-bbdf-ed1b0c18fd7c", // Victoria Lys
+  "712020:523d0600-c0d4-4612-80f6-5d9b4bee5770", // Vladyslav Bilotskyi
   "712020:f18cf3aa-9b75-4533-bd79-8c5f528fddac", // Anton Kruk
+  "712020:930bf3bb-2837-4d0b-b6f3-70c3bb94cd18", // Danil Arabadzhy
 ];
-const JQL = `project = SRND AND reporter IN (${REPORTERS.join(", ")}) AND "Products[Dropdown]" = Marketing ORDER BY parent ASC, status ASC, updated DESC`;
+const JQL = `project = SRND AND assignee IN (${TEAM.join(", ")}) AND "Products[Dropdown]" = Marketing ORDER BY parent ASC, status ASC, updated DESC`;
 const FIELDS = "summary,status,assignee,parent,priority,customfield_12903,customfield_12763";
 const STAGE = { Sprint: "sprint", Today: "today", Add: "add", Extra: "extra", "Готово": "done", Backlog: "backlog", Archived: "archived", Tracking: "tracking", Drop: "drop", Undone: "undone", "Useful materials": "useful" };
 
@@ -47,12 +50,20 @@ function marVal(v) { return v && typeof v === "object" ? (v.value || v.name) : v
 function spVal(v) { if (v == null) return null; if (typeof v === "object") v = v.value || v.name; const f = Number(v); return Number.isFinite(f) ? f : String(v); }
 
 async function boardData() {
-  const url = `/rest/api/3/search/jql?jql=${encodeURIComponent(JQL)}&maxResults=300&fields=${encodeURIComponent(FIELDS)}`;
-  const r = await jira(url);
-  if (!r.ok) throw new Error("jira search " + r.status);
+  // enhanced search returns max 100 per page → paginate via nextPageToken
+  const issues = [];
+  let token = null;
+  do {
+    let url = `/rest/api/3/search/jql?jql=${encodeURIComponent(JQL)}&maxResults=100&fields=${encodeURIComponent(FIELDS)}`;
+    if (token) url += `&nextPageToken=${encodeURIComponent(token)}`;
+    const r = await jira(url);
+    if (!r.ok) throw new Error("jira search " + r.status);
+    for (const it of r.body.issues || []) issues.push(it);
+    token = r.body.isLast ? null : r.body.nextPageToken;
+  } while (token && issues.length < 1000);
   const goals = new Map();
   const NONE = "__none__";
-  for (const it of r.body.issues) {
+  for (const it of issues) {
     const f = it.fields;
     const p = f.parent;
     const gk = p ? p.key : NONE;
