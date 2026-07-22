@@ -745,7 +745,7 @@
   const stageBar = document.getElementById("stageToggles");
   function stageCount(key) { let n = 0; GOALS.forEach(g => g.tasks.forEach(t => { if (t.stage === key) n++; })); return n; }
   function buildStageToggles() {
-    stageBar.innerHTML = STAGES.filter(s => stageCount(s.key) > 0).map(s =>
+    stageBar.innerHTML = STAGES.map(s =>
       `<button class="stg-toggle" type="button" data-stage="${s.key}" title="Показати / сховати">
         <span class="dot" style="background:${STAGE_COLOR[s.key] || "#999"}"></span>${s.label}
         <span class="badge">${stageCount(s.key)}</span></button>`).join("");
@@ -1099,6 +1099,7 @@
       const rest = remaining.length ? ["", remaining[0], remaining[1] || ""] : ["", "—", ""];
       reel.innerHTML = rest.map(itemHtml).join("");
       renderPicked(); updateButtons();
+      selOwners.clear(); render(); // зняти авто-фільтр
     }
     function pull() {
       if (spinning || remaining.length === 0) return;
@@ -1133,6 +1134,8 @@
       fireConfetti(rc.left + rc.width / 2, rc.top + rc.height / 2);
       picked.push(winner); remaining.splice(i, 1); spinning = false;
       renderPicked(); updateButtons();
+      // авто-фільтр дошки на задачі того, хто випав
+      selOwners.clear(); selOwners.add(winner); render();
     }
 
     // ---- конфеті ----
