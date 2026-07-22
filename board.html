@@ -408,50 +408,49 @@
   .wheel-head { display: flex; align-items: center; font-size: 15px; font-weight: 800; margin-bottom: 14px; }
   .wheel-head .x { margin-left: auto; border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); }
 
-  .slot { display: flex; align-items: stretch; gap: 10px; }
+  .slot { display: flex; align-items: center; gap: 6px; justify-content: center; padding: 2px 0 4px; }
   .slot-machine {
-    flex: 1; border-radius: 16px; padding: 12px;
-    background: linear-gradient(160deg, #ffe08a, #f4b53f 45%, #d98a1e);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.6), inset 0 -3px 6px rgba(0,0,0,.25), 0 10px 24px -12px rgba(150,100,20,.6);
+    flex: 1; position: relative; border-radius: 22px 22px 14px 14px; padding: 0 12px 12px;
+    background: linear-gradient(180deg, #fff2c2 0%, #f7cb52 24%, #eab02f 55%, #cf8e1e 100%);
+    border: 1px solid #b47f1b;
+    box-shadow:
+      inset 0 2px 2px rgba(255,255,255,.9),
+      inset 0 -5px 10px rgba(120,70,10,.45),
+      inset 4px 0 8px rgba(120,70,10,.28), inset -4px 0 8px rgba(120,70,10,.28),
+      0 16px 30px -12px rgba(150,100,20,.7);
   }
+  .slot-top { display: flex; justify-content: center; gap: 20px; padding: 9px 0 8px; }
+  .slot-light {
+    width: 13px; height: 13px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffd6d6, #ff4d4d 46%, #a70000 92%);
+    box-shadow: 0 0 5px 1px rgba(255,60,60,.7), inset 0 1px 1px rgba(255,255,255,.75);
+    animation: slotBlink 1.15s infinite;
+  }
+  .slot-light:nth-child(2) { animation-delay: .38s; }
+  .slot-light:nth-child(3) { animation-delay: .76s; }
+  @keyframes slotBlink { 0%,100% { filter: brightness(.85); box-shadow: 0 0 4px 1px rgba(255,60,60,.5), inset 0 1px 1px rgba(255,255,255,.6); } 50% { filter: brightness(1.6); box-shadow: 0 0 13px 3px rgba(255,90,90,.95), inset 0 1px 1px rgba(255,255,255,.85); } }
   .slot-window {
-    position: relative; height: 168px; border-radius: 10px; overflow: hidden;
-    background: linear-gradient(#fbfbfd, #eef0f5);
-    box-shadow: inset 0 0 0 3px #fff, inset 0 8px 14px -6px rgba(0,0,0,.25), inset 0 -8px 14px -6px rgba(0,0,0,.25);
+    position: relative; height: 150px; border-radius: 8px; overflow: hidden;
+    background: linear-gradient(#fdfefe, #e7eaf1);
+    box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px #caa23a, inset 0 0 0 7px #9c7a1f,
+      inset 0 14px 20px -10px rgba(0,0,0,.55), inset 0 -14px 20px -10px rgba(0,0,0,.55);
   }
   .slot-reel { will-change: transform; }
   .slot-reel.spin { transition: transform 3s cubic-bezier(.1,.72,.15,1); }
-  .slot-item {
-    height: 56px; display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: 800; letter-spacing: -.01em;
-  }
-  .slot-window::before, .slot-window::after {
-    content: ""; position: absolute; left: 0; right: 0; height: 56px; z-index: 2; pointer-events: none;
-  }
-  .slot-window::before { top: 0; background: linear-gradient(#f4f6fa, rgba(244,246,250,0)); }
-  .slot-window::after { bottom: 0; background: linear-gradient(rgba(244,246,250,0), #f4f6fa); }
-  .slot-line {
-    position: absolute; left: 6px; right: 6px; top: 56px; height: 56px; z-index: 1; pointer-events: none;
-    border-top: 2px solid rgba(217,138,30,.55); border-bottom: 2px solid rgba(217,138,30,.55);
-    background: rgba(255,214,102,.12);
-  }
-  .slot-lever { position: relative; width: 26px; background: none; border: none; cursor: pointer; padding: 0; flex: 0 0 auto; }
-  .slot-lever .arm {
-    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
-    width: 8px; height: 96px; border-radius: 8px;
-    background: linear-gradient(90deg, #aab1bd, #eef1f6 45%, #aab1bd);
-    transition: height .18s cubic-bezier(.3,.8,.4,1);
-  }
-  .slot-lever .knob {
-    position: absolute; left: 50%; top: 6px; transform: translateX(-50%);
-    width: 26px; height: 26px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ff8080, #d61f1f 72%);
-    box-shadow: 0 3px 6px rgba(150,20,20,.5), inset 0 2px 3px rgba(255,255,255,.5);
-    transition: top .18s cubic-bezier(.3,.8,.4,1);
-  }
-  .slot-lever .base { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); width: 20px; height: 12px; border-radius: 6px; background: linear-gradient(#c9cfd9, #9aa1ad); }
-  .slot-lever.pulled .knob { top: 96px; }
-  .slot-lever.pulled .arm { height: 26px; }
+  .slot-item { height: 50px; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
+  .slot-window::before, .slot-window::after { content: ""; position: absolute; left: 0; right: 0; height: 50px; z-index: 2; pointer-events: none; }
+  .slot-window::before { top: 0; background: linear-gradient(#eef1f6, rgba(238,241,246,0)); }
+  .slot-window::after { bottom: 0; background: linear-gradient(rgba(238,241,246,0), #eef1f6); }
+  .slot-line { position: absolute; left: 8px; right: 8px; top: 50px; height: 50px; z-index: 1; pointer-events: none; border-top: 2px solid rgba(207,142,30,.6); border-bottom: 2px solid rgba(207,142,30,.6); background: rgba(255,208,80,.14); }
+  .slot-buttons { display: flex; justify-content: center; gap: 16px; padding: 11px 0 3px; }
+  .slot-buttons span { width: 15px; height: 15px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ff9a9a, #e22626 55%, #920f0f); box-shadow: inset 0 1px 1px rgba(255,255,255,.6), 0 2px 3px rgba(120,10,10,.5); }
+
+  .slot-lever { position: relative; width: 30px; height: 150px; align-self: center; background: none; border: none; cursor: pointer; padding: 0; flex: 0 0 auto; }
+  .slot-lever .mount { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 16px; height: 18px; border-radius: 5px; background: linear-gradient(#d9b64a, #a97c1a); box-shadow: inset 0 1px 1px rgba(255,255,255,.5), 0 2px 3px rgba(0,0,0,.3); }
+  .slot-lever .arm { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); width: 7px; height: 94px; border-radius: 6px; background: linear-gradient(90deg, #8f97a4, #eef1f6 45%, #8f97a4); transition: height .2s cubic-bezier(.34,.8,.4,1); }
+  .slot-lever .knob { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #ff9a9a, #d61f1f 68%, #9c0f0f); box-shadow: 0 4px 7px rgba(150,20,20,.55), inset 0 2px 3px rgba(255,255,255,.55); transition: top .2s cubic-bezier(.34,.8,.4,1); }
+  .slot-lever.pulled .knob { top: 82px; }
+  .slot-lever.pulled .arm { height: 22px; }
 
   .wheel-result { text-align: center; margin-top: 14px; min-height: 30px; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 9px; }
   .wheel-result.pop { animation: wheelpop .5s cubic-bezier(.2,.9,.3,1.3); }
@@ -520,12 +519,14 @@
   <div class="wheel-head">Who's next?<button class="x" id="wheelClose" type="button" aria-label="Закрити">×</button></div>
   <div class="slot">
     <div class="slot-machine">
+      <div class="slot-top"><span class="slot-light"></span><span class="slot-light"></span><span class="slot-light"></span></div>
       <div class="slot-window">
         <div class="slot-line"></div>
         <div class="slot-reel" id="slotReel"></div>
       </div>
+      <div class="slot-buttons"><span></span><span></span><span></span></div>
     </div>
-    <button class="slot-lever" id="slotLever" type="button" title="Смикни ручку"><span class="arm"></span><span class="knob"></span><span class="base"></span></button>
+    <button class="slot-lever" id="slotLever" type="button" title="Смикни ручку"><span class="mount"></span><span class="arm"></span><span class="knob"></span></button>
   </div>
   <div class="wheel-result" id="wheelResult"></div>
   <div class="wheel-actions">
@@ -1078,7 +1079,7 @@
     const pickedEl = document.getElementById("wheelPicked");
     const spinBtn = document.getElementById("wheelSpin");
     const resetBtn = document.getElementById("wheelReset");
-    const ITEM = 56;
+    const ITEM = 50;
     let all = [], remaining = [], picked = [], spinning = false;
 
     const first = n => String(n).trim().split(/\s+/)[0];
@@ -1122,9 +1123,9 @@
       reel.style.transform = "translateY(0)";
       void reel.offsetWidth;
       reel.classList.add("spin");
-      requestAnimationFrame(() => { reel.style.transform = `translateY(${-(winIdx - 1) * ITEM}px)`; });
-      const onEnd = () => { reel.removeEventListener("transitionend", onEnd); finish(i, winner); };
-      reel.addEventListener("transitionend", onEnd);
+      void reel.offsetWidth;
+      reel.style.transform = `translateY(${-(winIdx - 1) * ITEM}px)`;
+      setTimeout(() => finish(i, winner), 3050);
     }
     function finish(i, winner) {
       const p = personOf(winner);
