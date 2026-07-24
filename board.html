@@ -393,7 +393,7 @@
   .palette button:hover { background: #f0edfd; }
   .palette button.armed { background: #f0edfd; box-shadow: inset 0 0 0 2px var(--sprint); }
 
-  /* ---- slot machine "Who's next?" ---- */
+  /* ---- pirate chest "Who's next?" ---- */
   .wheel-launch {
     position: fixed; right: 22px; bottom: 22px; z-index: 70;
     display: inline-flex; align-items: center; gap: 8px;
@@ -408,65 +408,58 @@
     box-shadow: 0 26px 60px -20px rgba(45,50,80,.5); display: none;
   }
   .wheel-panel.open { display: block; }
-  .wheel-head { display: flex; align-items: center; font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+  .wheel-head { display: flex; align-items: center; font-size: 15px; font-weight: 800; margin-bottom: 8px; }
   .wheel-head .x { margin-left: auto; border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); }
 
-  .slot { display: flex; align-items: center; gap: 6px; justify-content: center; padding: 2px 0 4px; }
-  .slot-machine {
-    flex: 1; position: relative; border-radius: 22px 22px 14px 14px; padding: 0 12px 12px;
-    background: linear-gradient(180deg, #fff2c2 0%, #f7cb52 24%, #eab02f 55%, #cf8e1e 100%);
-    border: 1px solid #b47f1b;
-    box-shadow:
-      inset 0 2px 2px rgba(255,255,255,.9),
-      inset 0 -5px 10px rgba(120,70,10,.45),
-      inset 4px 0 8px rgba(120,70,10,.28), inset -4px 0 8px rgba(120,70,10,.28),
-      0 16px 30px -12px rgba(150,100,20,.7);
-  }
-  .slot-top { display: flex; justify-content: center; gap: 20px; padding: 9px 0 8px; }
-  .slot-light {
-    width: 13px; height: 13px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffd6d6, #ff4d4d 46%, #a70000 92%);
-    box-shadow: 0 0 5px 1px rgba(255,60,60,.7), inset 0 1px 1px rgba(255,255,255,.75);
-    animation: slotBlink 1.15s infinite;
-  }
-  .slot-light:nth-child(2) { animation-delay: .38s; }
-  .slot-light:nth-child(3) { animation-delay: .76s; }
-  @keyframes slotBlink { 0%,100% { filter: brightness(.85); box-shadow: 0 0 4px 1px rgba(255,60,60,.5), inset 0 1px 1px rgba(255,255,255,.6); } 50% { filter: brightness(1.6); box-shadow: 0 0 13px 3px rgba(255,90,90,.95), inset 0 1px 1px rgba(255,255,255,.85); } }
-  .slot-window {
-    position: relative; height: 150px; border-radius: 8px; overflow: hidden;
-    background: linear-gradient(#fdfefe, #e7eaf1);
-    box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px #caa23a, inset 0 0 0 7px #9c7a1f,
-      inset 0 14px 20px -10px rgba(0,0,0,.55), inset 0 -14px 20px -10px rgba(0,0,0,.55);
-  }
-  .slot-reel { will-change: transform; }
-  .slot-reel.spin { transition: transform 3s cubic-bezier(.1,.72,.15,1); }
-  .slot-item { height: 50px; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
-  .slot-window::before, .slot-window::after { content: ""; position: absolute; left: 0; right: 0; height: 50px; z-index: 2; pointer-events: none; }
-  .slot-window::before { top: 0; background: linear-gradient(#eef1f6, rgba(238,241,246,0)); }
-  .slot-window::after { bottom: 0; background: linear-gradient(rgba(238,241,246,0), #eef1f6); }
-  .slot-line { position: absolute; left: 8px; right: 8px; top: 50px; height: 50px; z-index: 1; pointer-events: none; border-top: 2px solid rgba(207,142,30,.6); border-bottom: 2px solid rgba(207,142,30,.6); background: rgba(255,208,80,.14); }
-  .slot-buttons { display: flex; justify-content: center; gap: 16px; padding: 11px 0 3px; }
-  .slot-buttons span { width: 15px; height: 15px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ff9a9a, #e22626 55%, #920f0f); box-shadow: inset 0 1px 1px rgba(255,255,255,.6), 0 2px 3px rgba(120,10,10,.5); }
+  .chest-stage { position: relative; width: 244px; height: 186px; margin: 6px auto 0; perspective: 800px; }
+  .chest { position: absolute; inset: 0; transform-style: preserve-3d; cursor: pointer; }
+  .chest.shaking { animation: chestShake .5s; }
+  @keyframes chestShake { 0%,100%{transform:translateX(0) rotate(0)} 20%{transform:translateX(-4px) rotate(-1.2deg)} 40%{transform:translateX(4px) rotate(1.2deg)} 60%{transform:translateX(-3px) rotate(-.8deg)} 80%{transform:translateX(3px) rotate(.8deg)} }
 
-  .slot-lever { position: relative; width: 30px; height: 150px; align-self: center; background: none; border: none; cursor: pointer; padding: 0; flex: 0 0 auto; }
-  .slot-lever .mount { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 16px; height: 18px; border-radius: 5px; background: linear-gradient(#d9b64a, #a97c1a); box-shadow: inset 0 1px 1px rgba(255,255,255,.5), 0 2px 3px rgba(0,0,0,.3); }
-  .slot-lever .arm { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); width: 7px; height: 94px; border-radius: 6px; background: linear-gradient(90deg, #8f97a4, #eef1f6 45%, #8f97a4); transition: height .2s cubic-bezier(.34,.8,.4,1); }
-  .slot-lever .knob { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #ff9a9a, #d61f1f 68%, #9c0f0f); box-shadow: 0 4px 7px rgba(150,20,20,.55), inset 0 2px 3px rgba(255,255,255,.55); transition: top .2s cubic-bezier(.34,.8,.4,1); }
-  .slot-lever.pulled .knob { top: 82px; }
-  .slot-lever.pulled .arm { height: 22px; }
+  .chest-back { position: absolute; left: 18px; right: 18px; top: 18px; height: 88px; border-radius: 8px; overflow: hidden; z-index: 1;
+    background: radial-gradient(circle at 50% 20%, #3a2712, #201305); box-shadow: inset 0 8px 16px rgba(0,0,0,.6); }
+  .chest-gold { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease .18s;
+    background: radial-gradient(ellipse at 50% 92%, #fff3b0, #f4c430 42%, #cf9a1e 78%, #a9781a 100%); }
+  .chest-gold::after { content: ""; position: absolute; inset: 0; opacity: .5;
+    background: radial-gradient(circle at 30% 40%, rgba(255,255,255,.9), transparent 22%), radial-gradient(circle at 68% 62%, rgba(255,255,255,.7), transparent 20%); }
+  .chest.open .chest-gold { opacity: 1; }
+  .chest-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2;
+    font-size: 23px; font-weight: 900; letter-spacing: -.01em; color: #5a3d0c;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5), 0 2px 3px rgba(120,80,10,.4);
+    opacity: 0; transform: scale(.5) translateY(12px); transition: opacity .35s ease .28s, transform .4s cubic-bezier(.2,.85,.3,1.5) .28s; }
+  .chest.open .chest-name { opacity: 1; transform: scale(1) translateY(0); }
+
+  .chest-front, .chest-lid { background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 1px, transparent 1px 24px),
+      linear-gradient(180deg, #915e30, #714823 58%, #593615);
+    border: 1px solid #4a2d11; }
+  .chest-front { position: absolute; left: 12px; right: 12px; bottom: 4px; height: 100px; border-radius: 6px 6px 10px 10px; z-index: 3;
+    box-shadow: inset 0 2px 2px rgba(255,255,255,.18), inset 0 -6px 10px rgba(0,0,0,.4), 0 14px 26px -12px rgba(60,35,10,.7); }
+  .chest-lid { position: absolute; left: 8px; right: 8px; top: 22px; height: 68px; border-radius: 44px 44px 6px 6px; z-index: 4;
+    transform-origin: 50% 100%; transition: transform .6s cubic-bezier(.3,.75,.25,1.15);
+    box-shadow: inset 0 3px 3px rgba(255,255,255,.22), 0 -3px 8px rgba(0,0,0,.25); }
+  .chest.open .chest-lid { transform: rotateX(118deg); }
+
+  .band { position: absolute; top: -1px; bottom: -1px; width: 15px; background: linear-gradient(90deg, #b9821c, #ffe58a 45%, #c9922a); box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+  .chest-front .band:nth-of-type(1), .chest-lid .band:nth-of-type(1) { left: 24%; }
+  .chest-front .band:nth-of-type(2), .chest-lid .band:nth-of-type(2) { right: 24%; }
+  .chest-lid .band { top: 40%; }
+  .chest-front .lock { position: absolute; left: 50%; transform: translateX(-50%); bottom: 8px; width: 26px; height: 30px; border-radius: 5px; z-index: 2;
+    background: linear-gradient(#ffe58a, #c9922a); box-shadow: inset 0 0 0 1px rgba(0,0,0,.25), 0 2px 4px rgba(0,0,0,.35); }
+  .chest-front .lock::after { content: ""; position: absolute; left: 50%; top: 8px; transform: translateX(-50%); width: 6px; height: 7px; border-radius: 50% 50% 0 0; background: #4a2d11; box-shadow: 0 6px 0 -2px #4a2d11; }
 
   .wheel-result { text-align: center; margin-top: 14px; min-height: 30px; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 9px; }
   .wheel-result.pop { animation: wheelpop .5s cubic-bezier(.2,.9,.3,1.3); }
   @keyframes wheelpop { 0% { transform: scale(.6); opacity: 0; } 55% { transform: scale(1.14); } 100% { transform: scale(1); opacity: 1; } }
   .wheel-actions { display: flex; gap: 8px; margin-top: 12px; }
   .wheel-actions button { flex: 1; font: inherit; font-size: 13px; font-weight: 700; border-radius: 11px; padding: 10px; cursor: pointer; border: 1px solid var(--line); background: #fff; color: var(--ink); }
-  .wheel-actions .spin { background: linear-gradient(135deg, #8a5cff, #5b57e0); border: none; color: #fff; box-shadow: 0 8px 18px -7px rgba(91,87,224,.75); }
-  .wheel-actions .spin:hover:not(:disabled) { filter: brightness(1.05); }
+  .wheel-actions .spin { background: linear-gradient(135deg, #d9a021, #b5791a); border: none; color: #fff; box-shadow: 0 8px 18px -7px rgba(150,100,20,.8); }
+  .wheel-actions .spin:hover:not(:disabled) { filter: brightness(1.06); }
   .wheel-actions button:disabled { opacity: .5; cursor: default; box-shadow: none; }
   .wheel-picked { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
   .wheel-picked .p { font-size: 11px; font-weight: 600; color: var(--faint); background: #f4f5f9; border-radius: 999px; padding: 3px 9px; }
   #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 120; }
-  @media (prefers-reduced-motion: reduce) { .slot-reel.spin { transition: transform 1s ease-out; } .slot-lever .knob, .slot-lever .arm { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .chest-lid { transition: transform .25s ease; } .chest.shaking { animation: none; } }
 
   @media (max-width: 640px) {
     .page { padding: 14px 10px 70px; }
@@ -517,19 +510,15 @@
   <button class="stk-toggle" id="stkToggle" type="button" title="Стікери" aria-label="Стікери">🙂</button>
 </div>
 
-<button class="wheel-launch" id="wheelLaunch" type="button">🎰 Who's next?</button>
+<button class="wheel-launch" id="wheelLaunch" type="button">🏴‍☠️ Who's next?</button>
 <div class="wheel-panel" id="wheelPanel">
   <div class="wheel-head">Who's next?<button class="x" id="wheelClose" type="button" aria-label="Закрити">×</button></div>
-  <div class="slot">
-    <div class="slot-machine">
-      <div class="slot-top"><span class="slot-light"></span><span class="slot-light"></span><span class="slot-light"></span></div>
-      <div class="slot-window">
-        <div class="slot-line"></div>
-        <div class="slot-reel" id="slotReel"></div>
-      </div>
-      <div class="slot-buttons"><span></span><span></span><span></span></div>
+  <div class="chest-stage">
+    <div class="chest" id="chest">
+      <div class="chest-back"><div class="chest-gold"></div><div class="chest-name" id="chestName"></div></div>
+      <div class="chest-lid"><span class="band"></span><span class="band"></span></div>
+      <div class="chest-front"><span class="band"></span><span class="band"></span><span class="lock"></span></div>
     </div>
-    <button class="slot-lever" id="slotLever" type="button" title="Смикни ручку"><span class="mount"></span><span class="arm"></span><span class="knob"></span></button>
   </div>
   <div class="wheel-result" id="wheelResult"></div>
   <div class="wheel-actions">
@@ -1073,18 +1062,17 @@
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape") { setArmed(null); palette.classList.remove("open"); closeStatusMenu(); } });
 
-  /* =====================  СЛОТ-МАШИНА «WHO'S NEXT?»  ===================== */
-  (function slotInit() {
+  /* =====================  ПІРАТСЬКА СКРИНЯ «WHO'S NEXT?»  ===================== */
+  (function chestInit() {
     const launch = document.getElementById("wheelLaunch");
     const panel = document.getElementById("wheelPanel");
-    const reel = document.getElementById("slotReel");
-    const lever = document.getElementById("slotLever");
+    const chest = document.getElementById("chest");
+    const chestName = document.getElementById("chestName");
     const resultEl = document.getElementById("wheelResult");
     const pickedEl = document.getElementById("wheelPicked");
     const spinBtn = document.getElementById("wheelSpin");
     const resetBtn = document.getElementById("wheelReset");
-    const ITEM = 50;
-    let all = [], remaining = [], picked = [], spinning = false;
+    let all = [], remaining = [], picked = [], busy = false;
 
     const first = n => String(n).trim().split(/\s+/)[0];
     function allOwners() {
@@ -1092,64 +1080,45 @@
       GOALS.forEach(g => g.tasks.forEach(t => t.who && s.add(t.who)));
       return [...s].sort((a, b) => a.localeCompare(b, "uk"));
     }
-    function itemHtml(n) { const p = n ? personOf(n) : { c: "var(--ink)" }; return `<div class="slot-item" style="color:${p.c}">${n ? esc(first(n)) : ""}</div>`; }
     function renderPicked() { pickedEl.innerHTML = picked.map((w, i) => `<span class="p">${i + 1}. ${esc(first(w))}</span>`).join(""); }
     function updateButtons() {
-      spinBtn.disabled = spinning || remaining.length === 0;
-      spinBtn.textContent = remaining.length === 0 ? "Усі обрані" : (spinning ? "…" : "Крутити");
+      spinBtn.disabled = busy || remaining.length === 0;
+      spinBtn.textContent = remaining.length === 0 ? "Усі обрані" : (busy ? "…" : "Відкрити");
     }
     function resetWheel() {
-      all = allOwners(); remaining = all.slice(); picked = []; spinning = false;
-      resultEl.innerHTML = ""; reel.classList.remove("spin"); reel.style.transform = "translateY(0)";
-      const rest = remaining.length ? ["", remaining[0], remaining[1] || ""] : ["", "—", ""];
-      reel.innerHTML = rest.map(itemHtml).join("");
-      renderPicked(); updateButtons();
-      selOwners.clear(); render(); // зняти авто-фільтр
+      all = allOwners(); remaining = all.slice(); picked = []; busy = false;
+      chest.classList.remove("open"); chestName.textContent = "";
+      resultEl.innerHTML = ""; renderPicked(); updateButtons();
+      selOwners.clear(); render();
     }
-    function pull() {
-      if (spinning || remaining.length === 0) return;
-      lever.classList.add("pulled");
-      setTimeout(() => { lever.classList.remove("pulled"); spin(); }, 260);
-    }
-    function spin() {
-      if (spinning || remaining.length === 0) return;
-      spinning = true; updateButtons(); resultEl.innerHTML = "";
+    function openChest() {
+      if (busy || remaining.length === 0) return;
+      busy = true; updateButtons(); resultEl.innerHTML = "";
       const i = Math.floor(Math.random() * remaining.length);
       const winner = remaining[i];
-      const FILL = 26;
-      const strip = [];
-      const rand = (avoid) => { let n; do { n = all[Math.floor(Math.random() * all.length)]; } while (all.length > 1 && n === avoid); return n; };
-      let prev = null;
-      for (let k = 0; k < FILL; k++) { prev = rand(prev); strip.push(prev); }
-      if (strip[FILL - 1] === winner) strip[FILL - 1] = rand(winner); // не поруч з переможцем
-      strip.push(winner);
-      strip.push(rand(winner));
-      const winIdx = FILL;
-      reel.classList.remove("spin");
-      reel.innerHTML = strip.map(itemHtml).join("");
-      reel.style.transform = "translateY(0)";
-      void reel.offsetWidth;
-      reel.classList.add("spin");
-      void reel.offsetWidth;
-      reel.style.transform = `translateY(${-(winIdx - 1) * ITEM}px)`;
-      setTimeout(() => finish(i, winner), 3050);
+      chest.classList.remove("open");
+      chestName.textContent = first(winner);
+      chest.classList.add("shaking");
+      setTimeout(() => {
+        chest.classList.remove("shaking");
+        chest.classList.add("open");
+        const rc = chest.getBoundingClientRect();
+        fireConfetti(rc.left + rc.width / 2, rc.top + rc.height / 2 - 24);
+        finish(i, winner);
+      }, 520);
     }
     function finish(i, winner) {
       const p = personOf(winner);
       resultEl.innerHTML = `<span class="av" style="background:${p.c};width:26px;height:26px;font-size:10px">${p.i}</span> ${esc(first(winner))} 🎉`;
       resultEl.classList.remove("pop"); void resultEl.offsetWidth; resultEl.classList.add("pop");
-      const rc = reel.getBoundingClientRect();
-      fireConfetti(rc.left + rc.width / 2, rc.top + rc.height / 2);
-      picked.push(winner); remaining.splice(i, 1); spinning = false;
+      picked.push(winner); remaining.splice(i, 1); busy = false;
       renderPicked(); updateButtons();
-      // авто-фільтр дошки на задачі того, хто випав
       selOwners.clear(); selOwners.add(winner); render();
     }
 
-    // ---- конфеті ----
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let confParticles = [], confRAF = null;
-    const CONF_COLORS = ["#ff5e5b", "#ffd166", "#06d6a0", "#4d96ff", "#c77dff", "#ff9f1c", "#ef476f", "#118ab2"];
+    const CONF_COLORS = ["#ffd700", "#f4c430", "#ffe98a", "#c9922a", "#fff2b0", "#e0a020"];
     function fireConfetti(cx, cy) {
       if (reduce) return;
       const canvas = document.getElementById("confetti");
@@ -1157,11 +1126,11 @@
       for (let i = 0; i < 130; i++) {
         const a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 8;
         confParticles.push({
-          x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4,
+          x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
           g: 0.12 + Math.random() * 0.08, size: 5 + Math.random() * 7,
           color: CONF_COLORS[i % CONF_COLORS.length], rot: Math.random() * 6.28,
           vr: (Math.random() - .5) * .4, life: 0, max: 70 + Math.random() * 45,
-          shape: Math.random() < .5 ? "r" : "c",
+          shape: Math.random() < .72 ? "c" : "r",
         });
       }
       if (!confRAF) confLoop();
@@ -1184,8 +1153,8 @@
 
     launch.addEventListener("click", () => { const open = panel.classList.toggle("open"); if (open) resetWheel(); });
     document.getElementById("wheelClose").addEventListener("click", () => panel.classList.remove("open"));
-    lever.addEventListener("click", pull);
-    spinBtn.addEventListener("click", pull);
+    chest.addEventListener("click", openChest);
+    spinBtn.addEventListener("click", openChest);
     resetBtn.addEventListener("click", resetWheel);
   })();
 </script>
