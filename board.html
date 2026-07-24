@@ -405,7 +405,7 @@
   .palette button:hover { background: #f0edfd; }
   .palette button.armed { background: #f0edfd; box-shadow: inset 0 0 0 2px var(--sprint); }
 
-  /* ---- pirate chest "Who's next?" ---- */
+  /* ---- wheel of fortune "Who's next?" ---- */
   .wheel-launch {
     position: fixed; right: 22px; bottom: 22px; z-index: 70;
     display: inline-flex; align-items: center; gap: 8px;
@@ -423,76 +423,33 @@
   .wheel-head { display: flex; align-items: center; font-size: 15px; font-weight: 800; margin-bottom: 8px; }
   .wheel-head .x { margin-left: auto; border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); }
 
-  .chest-stage { position: relative; width: 244px; height: 186px; margin: 6px auto 0; perspective: 800px; }
-  .chest { position: absolute; inset: 0; transform-style: preserve-3d; cursor: pointer; }
-  .chest.shaking { animation: chestShake .5s; }
-  @keyframes chestShake { 0%,100%{transform:translateX(0) rotate(0)} 20%{transform:translateX(-4px) rotate(-1.2deg)} 40%{transform:translateX(4px) rotate(1.2deg)} 60%{transform:translateX(-3px) rotate(-.8deg)} 80%{transform:translateX(3px) rotate(.8deg)} }
-
-  /* interior revealed on open */
-  .chest-back { position: absolute; left: 24px; right: 24px; top: 22px; height: 82px; border-radius: 7px; overflow: hidden; z-index: 1;
-    background: radial-gradient(circle at 50% 18%, #4a3016, #241505); box-shadow: inset 0 7px 14px rgba(0,0,0,.6); }
-  .chest-gold { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease .18s;
-    background: radial-gradient(ellipse at 50% 95%, #fff6c4, #ffd94d 40%, #eeae23 74%, #c98e18 100%); }
-  .chest-gold::after { content: ""; position: absolute; inset: 0; opacity: .55;
-    background: radial-gradient(circle at 28% 42%, rgba(255,255,255,.95), transparent 20%), radial-gradient(circle at 70% 60%, rgba(255,255,255,.8), transparent 18%), radial-gradient(circle at 52% 30%, rgba(255,255,255,.7), transparent 16%); }
-  .chest.open .chest-gold { opacity: 1; }
-  .chest-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2;
-    font-size: 23px; font-weight: 900; letter-spacing: -.01em; color: #5a3d0c;
-    text-shadow: 0 1px 0 rgba(255,255,255,.55), 0 2px 3px rgba(120,80,10,.4);
-    opacity: 0; transform: scale(.5) translateY(12px); transition: opacity .35s ease .28s, transform .4s cubic-bezier(.2,.85,.3,1.5) .28s; }
-  .chest.open .chest-name { opacity: 1; transform: scale(1) translateY(0); }
-
-  /* body — warm wood inside a thick gold frame */
-  .chest-front {
-    position: absolute; left: 12px; right: 12px; bottom: 4px; height: 102px; z-index: 3;
-    border-radius: 9px 9px 13px 13px;
-    background: linear-gradient(180deg, #c58a4a, #a56d31 52%, #8a5824);
-    border: 4px solid #efc63f;
-    box-shadow: inset 0 0 0 1.5px #c69220, inset 0 3px 4px rgba(255,255,255,.28), inset 0 -8px 12px rgba(80,45,10,.45), 0 15px 28px -12px rgba(70,40,10,.7);
-  }
-  .chest-front::before { content: ""; position: absolute; inset: 2px; border-radius: 7px; pointer-events: none;
-    background: repeating-linear-gradient(90deg, rgba(90,50,15,.28) 0 1.5px, transparent 1.5px 26px); }
-  /* domed lid */
-  .chest-lid {
-    position: absolute; left: 6px; right: 6px; top: 14px; height: 76px; z-index: 4;
-    border-radius: 50% 50% 8px 8px / 82% 82% 8px 8px;
-    background: linear-gradient(180deg, #cf9752, #b0763a 62%, #97612a);
-    border: 4px solid #efc63f;
-    box-shadow: inset 0 0 0 1.5px #c69220, inset 0 4px 5px rgba(255,255,255,.32), 0 -2px 6px rgba(0,0,0,.2);
-    transform-origin: 50% 100%; transition: transform .6s cubic-bezier(.3,.75,.25,1.15);
-  }
-  .chest-lid::before { content: ""; position: absolute; inset: 2px; border-radius: inherit; pointer-events: none;
-    background: repeating-linear-gradient(90deg, rgba(90,50,15,.24) 0 1.5px, transparent 1.5px 26px); }
-  .chest.open .chest-lid { transform: rotateX(122deg); }
-
-  /* gold vertical straps */
-  .band { position: absolute; top: -4px; bottom: -4px; width: 17px; z-index: 1; border-radius: 3px;
-    background: linear-gradient(90deg, #c99326 0%, #ffe98c 42%, #f2c53c 60%, #b9821c 100%);
-    box-shadow: inset 0 0 0 1px rgba(120,80,10,.45), 0 0 2px rgba(0,0,0,.2); }
-  .chest-front .band:nth-of-type(1), .chest-lid .band:nth-of-type(1) { left: 22%; }
-  .chest-front .band:nth-of-type(2), .chest-lid .band:nth-of-type(2) { right: 22%; }
-  .chest-lid .band { top: -3px; bottom: -3px; }
-  /* gold lock plate */
-  .chest-front .lock { position: absolute; left: 50%; transform: translateX(-50%); bottom: 16px; width: 30px; height: 34px; border-radius: 7px; z-index: 2;
-    background: radial-gradient(circle at 40% 30%, #fff2b8, #f2c53c 55%, #c9922a);
-    box-shadow: inset 0 0 0 1.5px #a97a17, inset 0 1px 2px rgba(255,255,255,.6), 0 2px 4px rgba(0,0,0,.4); }
-  .chest-front .lock::after { content: ""; position: absolute; left: 50%; top: 9px; transform: translateX(-50%); width: 7px; height: 8px; border-radius: 50% 50% 30% 30%; background: #3a2410; box-shadow: 0 7px 0 -2.5px #3a2410; }
+  .wheel-stage { position: relative; width: 280px; height: 280px; margin: 4px auto 0; }
+  .wheel-pointer { position: absolute; top: -3px; left: 50%; transform: translateX(-50%); z-index: 3;
+    width: 0; height: 0; border-left: 11px solid transparent; border-right: 11px solid transparent; border-top: 18px solid var(--ink); filter: drop-shadow(0 2px 2px rgba(0,0,0,.28)); }
+  .wheel-svg { width: 280px; height: 280px; transition: transform 4.2s cubic-bezier(.15,.85,.28,1); filter: drop-shadow(0 10px 22px rgba(45,50,80,.28)); }
+  .wheel-svg.no-anim { transition: none; }
+  .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 2;
+    width: 54px; height: 54px; border-radius: 50%; background: #fff; border: 1px solid var(--line);
+    display: grid; place-items: center; font: inherit; font-size: 10px; font-weight: 800; letter-spacing: .05em;
+    color: var(--sprint); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.14); animation: wheelpulse 2.4s ease-in-out infinite; }
+  .wheel-center:hover { color: var(--ink); }
+  @keyframes wheelpulse { 0%,100% { box-shadow: 0 2px 8px rgba(0,0,0,.14); } 50% { box-shadow: 0 2px 8px rgba(0,0,0,.14), 0 0 0 6px rgba(124,92,255,.14); } }
 
   .wheel-result { text-align: center; margin-top: 14px; min-height: 30px; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 9px; }
   .wheel-result.pop { animation: wheelpop .5s cubic-bezier(.2,.9,.3,1.3); }
   @keyframes wheelpop { 0% { transform: scale(.6); opacity: 0; } 55% { transform: scale(1.14); } 100% { transform: scale(1); opacity: 1; } }
   .wheel-actions { display: flex; gap: 8px; margin-top: 12px; }
   .wheel-actions button { flex: 1; font: inherit; font-size: 13px; font-weight: 700; border-radius: 11px; padding: 10px; cursor: pointer; border: 1px solid var(--line); background: #fff; color: var(--ink); }
-  .wheel-actions .spin { background: linear-gradient(135deg, #d9a021, #b5791a); border: none; color: #fff; box-shadow: 0 8px 18px -7px rgba(150,100,20,.8); }
-  .wheel-actions .spin:hover:not(:disabled) { filter: brightness(1.06); }
+  .wheel-actions .spin { background: linear-gradient(135deg, #8a5cff, #5b57e0); border: none; color: #fff; box-shadow: 0 8px 18px -7px rgba(91,87,224,.75); }
+  .wheel-actions .spin:hover:not(:disabled) { filter: brightness(1.05); }
   .wheel-actions button:disabled { opacity: .5; cursor: default; box-shadow: none; }
   .wheel-actions .thanks-btn { flex: 0 0 auto; font-size: 16px; padding: 10px 12px; background: #fff; }
   .wheel-actions .thanks-btn:hover { background: #fbf6e8; border-color: #e6c86a; }
-  .thanks-pop {
-    position: absolute; left: 50%; top: 2px; z-index: 6; pointer-events: none; white-space: nowrap;
+  .wheel-picked { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+  .wheel-picked .p { font-size: 11px; font-weight: 600; color: var(--faint); background: #f4f5f9; border-radius: 999px; padding: 3px 9px; }
+  .thanks-pop { position: absolute; left: 50%; top: 2px; z-index: 6; pointer-events: none; white-space: nowrap;
     font-size: 24px; font-weight: 900; color: #d9a021; text-shadow: 0 2px 4px rgba(120,80,10,.3);
-    opacity: 0; transform: translateX(-50%) translateY(10px) scale(.5);
-  }
+    opacity: 0; transform: translateX(-50%) translateY(10px) scale(.5); }
   .thanks-pop.show { animation: thanksPop 1.7s ease forwards; }
   @keyframes thanksPop {
     0% { opacity: 0; transform: translateX(-50%) translateY(12px) scale(.4); }
@@ -501,10 +458,8 @@
     80% { opacity: 1; transform: translateX(-50%) translateY(-30px) scale(1); }
     100% { opacity: 0; transform: translateX(-50%) translateY(-48px) scale(1); }
   }
-  .wheel-picked { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
-  .wheel-picked .p { font-size: 11px; font-weight: 600; color: var(--faint); background: #f4f5f9; border-radius: 999px; padding: 3px 9px; }
   #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 120; }
-  @media (prefers-reduced-motion: reduce) { .chest-lid { transition: transform .25s ease; } .chest.shaking { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .wheel-svg { transition: transform .8s ease-out; } .wheel-center { animation: none; } }
 
   @media (max-width: 640px) {
     .page { padding: 14px 10px 70px; }
@@ -561,13 +516,11 @@
 <button class="wheel-launch" id="wheelLaunch" type="button">🏴‍☠️ Who's next?</button>
 <div class="wheel-panel" id="wheelPanel">
   <div class="wheel-head">Who's next?<button class="x" id="wheelClose" type="button" aria-label="Закрити">×</button></div>
-  <div class="chest-stage">
+  <div class="wheel-stage">
     <div class="thanks-pop" id="thanksPop"></div>
-    <div class="chest" id="chest">
-      <div class="chest-back"><div class="chest-gold"></div><div class="chest-name" id="chestName"></div></div>
-      <div class="chest-lid"><span class="band"></span><span class="band"></span></div>
-      <div class="chest-front"><span class="band"></span><span class="band"></span><span class="lock"></span></div>
-    </div>
+    <div class="wheel-pointer"></div>
+    <svg class="wheel-svg" id="wheelSvg" viewBox="0 0 200 200"></svg>
+    <button class="wheel-center" id="wheelCenter" type="button">SPIN</button>
   </div>
   <div class="wheel-result" id="wheelResult"></div>
   <div class="wheel-actions">
@@ -1119,17 +1072,16 @@
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape") { setArmed(null); palette.classList.remove("open"); closeStatusMenu(); } });
 
-  /* =====================  ПІРАТСЬКА СКРИНЯ «WHO'S NEXT?»  ===================== */
-  (function chestInit() {
+  /* =====================  КОЛЕСО «WHO'S NEXT?»  ===================== */
+  (function wheelInit() {
     const launch = document.getElementById("wheelLaunch");
     const panel = document.getElementById("wheelPanel");
-    const chest = document.getElementById("chest");
-    const chestName = document.getElementById("chestName");
+    const svg = document.getElementById("wheelSvg");
     const resultEl = document.getElementById("wheelResult");
     const pickedEl = document.getElementById("wheelPicked");
     const spinBtn = document.getElementById("wheelSpin");
     const resetBtn = document.getElementById("wheelReset");
-    let all = [], remaining = [], picked = [], busy = false;
+    let remaining = [], picked = [], rot = 0, spinning = false;
 
     const first = n => String(n).trim().split(/\s+/)[0];
     function allOwners() {
@@ -1137,58 +1089,76 @@
       GOALS.forEach(g => g.tasks.forEach(t => t.who && s.add(t.who)));
       return [...s].sort((a, b) => a.localeCompare(b, "uk"));
     }
-    function renderPicked() { pickedEl.innerHTML = picked.map((w, i) => `<span class="p">${i + 1}. ${esc(first(w))}</span>`).join(""); }
-    function updateButtons() {
-      spinBtn.disabled = busy || remaining.length === 0;
-      spinBtn.textContent = remaining.length === 0 ? "Усі обрані" : (busy ? "…" : "Відкрити");
-    }
     function resetWheel() {
-      all = allOwners(); remaining = all.slice(); picked = []; busy = false;
-      chest.classList.remove("open"); chestName.textContent = "";
-      resultEl.innerHTML = ""; renderPicked(); updateButtons();
+      remaining = allOwners(); picked = []; spinning = false;
+      rot = 0; svg.classList.add("no-anim"); svg.style.transform = "rotate(0deg)";
+      void svg.offsetWidth; svg.classList.remove("no-anim");
+      resultEl.innerHTML = ""; drawWheel(); renderPicked(); updateButtons();
       selOwners.clear(); render();
     }
-    function openChest() {
-      if (busy || remaining.length === 0) return;
-      busy = true; updateButtons(); resultEl.innerHTML = "";
-      const i = Math.floor(Math.random() * remaining.length);
-      const winner = remaining[i];
-      chest.classList.remove("open");
-      chestName.textContent = first(winner);
-      chest.classList.add("shaking");
-      setTimeout(() => {
-        chest.classList.remove("shaking");
-        chest.classList.add("open");
-        const rc = chest.getBoundingClientRect();
-        fireConfetti(rc.left + rc.width / 2, rc.top + rc.height / 2 - 24);
-        finish(i, winner);
-      }, 520);
+    const hx = h => { h = h.replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; };
+    const mix = (hex, to, a) => { const c = hx(hex), d = hx(to); return "#" + c.map((v, i) => Math.round(v + (d[i] - v) * a).toString(16).padStart(2, "0")).join(""); };
+    const lighten = (h, a) => mix(h, "#ffffff", a), darken = (h, a) => mix(h, "#000000", a);
+    function drawWheel() {
+      const n = remaining.length, cx = 100, cy = 100, r = 95, tr = 66;
+      if (n === 0) { svg.innerHTML = `<circle cx="100" cy="100" r="95" fill="#eef0f5"/>`; return; }
+      const seg = 2 * Math.PI / n; let defs = "", body = "";
+      for (let i = 0; i < n; i++) {
+        const p = personOf(remaining[i]);
+        const t0 = i * seg, t1 = (i + 1) * seg, tm = (t0 + t1) / 2;
+        const xr = cx + r * Math.sin(tm), yr = cy - r * Math.cos(tm);
+        defs += `<linearGradient id="wg${i}" gradientUnits="userSpaceOnUse" x1="${cx}" y1="${cy}" x2="${xr.toFixed(1)}" y2="${yr.toFixed(1)}"><stop offset="0" stop-color="${lighten(p.c, .42)}"/><stop offset="1" stop-color="${darken(p.c, .06)}"/></linearGradient>`;
+        if (n === 1) { body += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#wg0)"/>`; }
+        else {
+          const x0 = cx + r * Math.sin(t0), y0 = cy - r * Math.cos(t0), x1 = cx + r * Math.sin(t1), y1 = cy - r * Math.cos(t1);
+          const large = (t1 - t0) > Math.PI ? 1 : 0;
+          body += `<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="url(#wg${i})" stroke="#fff" stroke-width="1.5"/>`;
+        }
+        const tx = cx + tr * Math.sin(tm), ty = cy - tr * Math.cos(tm);
+        body += `<text x="${tx.toFixed(1)}" y="${(ty + 3.5).toFixed(1)}" text-anchor="middle" fill="#fff" font-size="11" font-weight="800" style="paint-order:stroke;stroke:rgba(0,0,0,.18);stroke-width:2px">${p.i}</text>`;
+      }
+      svg.innerHTML = `<defs>${defs}</defs>${body}<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#fff" stroke-width="3"/>`;
     }
-    function finish(i, winner) {
-      const p = personOf(winner);
+    function renderPicked() { pickedEl.innerHTML = picked.map((w, i) => `<span class="p">${i + 1}. ${esc(first(w))}</span>`).join(""); }
+    function updateButtons() {
+      spinBtn.disabled = spinning || remaining.length === 0;
+      spinBtn.textContent = remaining.length === 0 ? "Усі обрані" : (spinning ? "…" : "Крутити");
+    }
+    function spin() {
+      if (spinning || remaining.length === 0) return;
+      spinning = true; updateButtons(); resultEl.innerHTML = "";
+      const n = remaining.length, seg = 360 / n;
+      const i = Math.floor(Math.random() * n);
+      const mid = (i + 0.5) * seg;
+      const current = ((rot % 360) + 360) % 360;
+      const delta = (360 - mid - current + 720) % 360;
+      rot += 360 * 5 + delta;
+      svg.style.transform = `rotate(${rot}deg)`;
+      setTimeout(() => finish(i), 4300);
+    }
+    function finish(i) {
+      const winner = remaining[i], p = personOf(winner);
       resultEl.innerHTML = `<span class="av" style="background:${p.c};width:26px;height:26px;font-size:10px">${p.i}</span> ${esc(first(winner))} 🎉`;
       resultEl.classList.remove("pop"); void resultEl.offsetWidth; resultEl.classList.add("pop");
-      picked.push(winner); remaining.splice(i, 1); busy = false;
-      renderPicked(); updateButtons();
+      const rc = svg.getBoundingClientRect();
+      fireConfetti(rc.left + rc.width / 2, rc.top + rc.height / 2);
+      picked.push(winner); remaining.splice(i, 1); spinning = false;
+      svg.classList.add("no-anim"); rot = 0; svg.style.transform = "rotate(0deg)";
+      void svg.offsetWidth; svg.classList.remove("no-anim");
+      drawWheel(); renderPicked(); updateButtons();
       selOwners.clear(); selOwners.add(winner); render();
     }
 
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let confParticles = [], confRAF = null;
-    const CONF_COLORS = ["#ffd700", "#f4c430", "#ffe98a", "#c9922a", "#fff2b0", "#e0a020"];
+    const CONF_COLORS = ["#ff5e5b", "#ffd166", "#06d6a0", "#4d96ff", "#c77dff", "#ff9f1c", "#ef476f", "#118ab2"];
     function fireConfetti(cx, cy) {
       if (reduce) return;
       const canvas = document.getElementById("confetti");
       canvas.width = innerWidth; canvas.height = innerHeight;
       for (let i = 0; i < 130; i++) {
         const a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 8;
-        confParticles.push({
-          x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
-          g: 0.12 + Math.random() * 0.08, size: 5 + Math.random() * 7,
-          color: CONF_COLORS[i % CONF_COLORS.length], rot: Math.random() * 6.28,
-          vr: (Math.random() - .5) * .4, life: 0, max: 70 + Math.random() * 45,
-          shape: Math.random() < .72 ? "c" : "r",
-        });
+        confParticles.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, g: 0.12 + Math.random() * 0.08, size: 5 + Math.random() * 7, color: CONF_COLORS[i % CONF_COLORS.length], rot: Math.random() * 6.28, vr: (Math.random() - .5) * .4, life: 0, max: 70 + Math.random() * 45, shape: Math.random() < .5 ? "r" : "c" });
       }
       if (!confRAF) confLoop();
     }
@@ -1198,12 +1168,7 @@
       canvas.width = innerWidth; canvas.height = innerHeight;
       for (let i = 0; i < 44; i++) {
         const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
-        confParticles.push({
-          x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
-          g: 0.1 + Math.random() * 0.06, size: 20 + Math.random() * 14,
-          emoji: THANKS_EMOJIS[Math.floor(Math.random() * THANKS_EMOJIS.length)],
-          rot: (Math.random() - .5) * .6, vr: (Math.random() - .5) * .3, life: 0, max: 85 + Math.random() * 50,
-        });
+        confParticles.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5, g: 0.1 + Math.random() * 0.06, size: 20 + Math.random() * 14, emoji: THANKS_EMOJIS[Math.floor(Math.random() * THANKS_EMOJIS.length)], rot: (Math.random() - .5) * .6, vr: (Math.random() - .5) * .3, life: 0, max: 85 + Math.random() * 50 });
       }
       if (!confRAF) confLoop();
     }
@@ -1211,8 +1176,8 @@
       const t = document.getElementById("thanksPop");
       t.textContent = "Thank youuu!";
       t.classList.remove("show"); void t.offsetWidth; t.classList.add("show");
-      const rc = chest.getBoundingClientRect();
-      fireEmojis(rc.left + rc.width / 2, rc.top + rc.height / 2 - 10);
+      const rc = svg.getBoundingClientRect();
+      fireEmojis(rc.left + rc.width / 2, rc.top + rc.height / 2);
     }
     function confLoop() {
       const canvas = document.getElementById("confetti"), ctx = canvas.getContext("2d");
@@ -1232,8 +1197,8 @@
 
     launch.addEventListener("click", () => { const open = panel.classList.toggle("open"); if (open) resetWheel(); });
     document.getElementById("wheelClose").addEventListener("click", () => panel.classList.remove("open"));
-    chest.addEventListener("click", openChest);
-    spinBtn.addEventListener("click", openChest);
+    document.getElementById("wheelCenter").addEventListener("click", spin);
+    spinBtn.addEventListener("click", spin);
     resetBtn.addEventListener("click", resetWheel);
     document.getElementById("thanksBtn").addEventListener("click", thanks);
   })();
