@@ -416,37 +416,55 @@
   .chest.shaking { animation: chestShake .5s; }
   @keyframes chestShake { 0%,100%{transform:translateX(0) rotate(0)} 20%{transform:translateX(-4px) rotate(-1.2deg)} 40%{transform:translateX(4px) rotate(1.2deg)} 60%{transform:translateX(-3px) rotate(-.8deg)} 80%{transform:translateX(3px) rotate(.8deg)} }
 
-  .chest-back { position: absolute; left: 18px; right: 18px; top: 18px; height: 88px; border-radius: 8px; overflow: hidden; z-index: 1;
-    background: radial-gradient(circle at 50% 20%, #3a2712, #201305); box-shadow: inset 0 8px 16px rgba(0,0,0,.6); }
+  /* interior revealed on open */
+  .chest-back { position: absolute; left: 24px; right: 24px; top: 22px; height: 82px; border-radius: 7px; overflow: hidden; z-index: 1;
+    background: radial-gradient(circle at 50% 18%, #4a3016, #241505); box-shadow: inset 0 7px 14px rgba(0,0,0,.6); }
   .chest-gold { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease .18s;
-    background: radial-gradient(ellipse at 50% 92%, #fff3b0, #f4c430 42%, #cf9a1e 78%, #a9781a 100%); }
-  .chest-gold::after { content: ""; position: absolute; inset: 0; opacity: .5;
-    background: radial-gradient(circle at 30% 40%, rgba(255,255,255,.9), transparent 22%), radial-gradient(circle at 68% 62%, rgba(255,255,255,.7), transparent 20%); }
+    background: radial-gradient(ellipse at 50% 95%, #fff6c4, #ffd94d 40%, #eeae23 74%, #c98e18 100%); }
+  .chest-gold::after { content: ""; position: absolute; inset: 0; opacity: .55;
+    background: radial-gradient(circle at 28% 42%, rgba(255,255,255,.95), transparent 20%), radial-gradient(circle at 70% 60%, rgba(255,255,255,.8), transparent 18%), radial-gradient(circle at 52% 30%, rgba(255,255,255,.7), transparent 16%); }
   .chest.open .chest-gold { opacity: 1; }
   .chest-name { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2;
     font-size: 23px; font-weight: 900; letter-spacing: -.01em; color: #5a3d0c;
-    text-shadow: 0 1px 0 rgba(255,255,255,.5), 0 2px 3px rgba(120,80,10,.4);
+    text-shadow: 0 1px 0 rgba(255,255,255,.55), 0 2px 3px rgba(120,80,10,.4);
     opacity: 0; transform: scale(.5) translateY(12px); transition: opacity .35s ease .28s, transform .4s cubic-bezier(.2,.85,.3,1.5) .28s; }
   .chest.open .chest-name { opacity: 1; transform: scale(1) translateY(0); }
 
-  .chest-front, .chest-lid { background:
-      repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 1px, transparent 1px 24px),
-      linear-gradient(180deg, #915e30, #714823 58%, #593615);
-    border: 1px solid #4a2d11; }
-  .chest-front { position: absolute; left: 12px; right: 12px; bottom: 4px; height: 100px; border-radius: 6px 6px 10px 10px; z-index: 3;
-    box-shadow: inset 0 2px 2px rgba(255,255,255,.18), inset 0 -6px 10px rgba(0,0,0,.4), 0 14px 26px -12px rgba(60,35,10,.7); }
-  .chest-lid { position: absolute; left: 8px; right: 8px; top: 22px; height: 68px; border-radius: 44px 44px 6px 6px; z-index: 4;
+  /* body — warm wood inside a thick gold frame */
+  .chest-front {
+    position: absolute; left: 12px; right: 12px; bottom: 4px; height: 102px; z-index: 3;
+    border-radius: 9px 9px 13px 13px;
+    background: linear-gradient(180deg, #c58a4a, #a56d31 52%, #8a5824);
+    border: 4px solid #efc63f;
+    box-shadow: inset 0 0 0 1.5px #c69220, inset 0 3px 4px rgba(255,255,255,.28), inset 0 -8px 12px rgba(80,45,10,.45), 0 15px 28px -12px rgba(70,40,10,.7);
+  }
+  .chest-front::before { content: ""; position: absolute; inset: 2px; border-radius: 7px; pointer-events: none;
+    background: repeating-linear-gradient(90deg, rgba(90,50,15,.28) 0 1.5px, transparent 1.5px 26px); }
+  /* domed lid */
+  .chest-lid {
+    position: absolute; left: 6px; right: 6px; top: 14px; height: 76px; z-index: 4;
+    border-radius: 50% 50% 8px 8px / 82% 82% 8px 8px;
+    background: linear-gradient(180deg, #cf9752, #b0763a 62%, #97612a);
+    border: 4px solid #efc63f;
+    box-shadow: inset 0 0 0 1.5px #c69220, inset 0 4px 5px rgba(255,255,255,.32), 0 -2px 6px rgba(0,0,0,.2);
     transform-origin: 50% 100%; transition: transform .6s cubic-bezier(.3,.75,.25,1.15);
-    box-shadow: inset 0 3px 3px rgba(255,255,255,.22), 0 -3px 8px rgba(0,0,0,.25); }
-  .chest.open .chest-lid { transform: rotateX(118deg); }
+  }
+  .chest-lid::before { content: ""; position: absolute; inset: 2px; border-radius: inherit; pointer-events: none;
+    background: repeating-linear-gradient(90deg, rgba(90,50,15,.24) 0 1.5px, transparent 1.5px 26px); }
+  .chest.open .chest-lid { transform: rotateX(122deg); }
 
-  .band { position: absolute; top: -1px; bottom: -1px; width: 15px; background: linear-gradient(90deg, #b9821c, #ffe58a 45%, #c9922a); box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
-  .chest-front .band:nth-of-type(1), .chest-lid .band:nth-of-type(1) { left: 24%; }
-  .chest-front .band:nth-of-type(2), .chest-lid .band:nth-of-type(2) { right: 24%; }
-  .chest-lid .band { top: 40%; }
-  .chest-front .lock { position: absolute; left: 50%; transform: translateX(-50%); bottom: 8px; width: 26px; height: 30px; border-radius: 5px; z-index: 2;
-    background: linear-gradient(#ffe58a, #c9922a); box-shadow: inset 0 0 0 1px rgba(0,0,0,.25), 0 2px 4px rgba(0,0,0,.35); }
-  .chest-front .lock::after { content: ""; position: absolute; left: 50%; top: 8px; transform: translateX(-50%); width: 6px; height: 7px; border-radius: 50% 50% 0 0; background: #4a2d11; box-shadow: 0 6px 0 -2px #4a2d11; }
+  /* gold vertical straps */
+  .band { position: absolute; top: -4px; bottom: -4px; width: 17px; z-index: 1; border-radius: 3px;
+    background: linear-gradient(90deg, #c99326 0%, #ffe98c 42%, #f2c53c 60%, #b9821c 100%);
+    box-shadow: inset 0 0 0 1px rgba(120,80,10,.45), 0 0 2px rgba(0,0,0,.2); }
+  .chest-front .band:nth-of-type(1), .chest-lid .band:nth-of-type(1) { left: 22%; }
+  .chest-front .band:nth-of-type(2), .chest-lid .band:nth-of-type(2) { right: 22%; }
+  .chest-lid .band { top: -3px; bottom: -3px; }
+  /* gold lock plate */
+  .chest-front .lock { position: absolute; left: 50%; transform: translateX(-50%); bottom: 16px; width: 30px; height: 34px; border-radius: 7px; z-index: 2;
+    background: radial-gradient(circle at 40% 30%, #fff2b8, #f2c53c 55%, #c9922a);
+    box-shadow: inset 0 0 0 1.5px #a97a17, inset 0 1px 2px rgba(255,255,255,.6), 0 2px 4px rgba(0,0,0,.4); }
+  .chest-front .lock::after { content: ""; position: absolute; left: 50%; top: 9px; transform: translateX(-50%); width: 7px; height: 8px; border-radius: 50% 50% 30% 30%; background: #3a2410; box-shadow: 0 7px 0 -2.5px #3a2410; }
 
   .wheel-result { text-align: center; margin-top: 14px; min-height: 30px; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 9px; }
   .wheel-result.pop { animation: wheelpop .5s cubic-bezier(.2,.9,.3,1.3); }
