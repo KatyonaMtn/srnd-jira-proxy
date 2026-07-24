@@ -486,6 +486,21 @@
   .wheel-actions .spin { background: linear-gradient(135deg, #d9a021, #b5791a); border: none; color: #fff; box-shadow: 0 8px 18px -7px rgba(150,100,20,.8); }
   .wheel-actions .spin:hover:not(:disabled) { filter: brightness(1.06); }
   .wheel-actions button:disabled { opacity: .5; cursor: default; box-shadow: none; }
+  .wheel-actions .thanks-btn { flex: 0 0 auto; font-size: 16px; padding: 10px 12px; background: #fff; }
+  .wheel-actions .thanks-btn:hover { background: #fbf6e8; border-color: #e6c86a; }
+  .thanks-pop {
+    position: absolute; left: 50%; top: 2px; z-index: 6; pointer-events: none; white-space: nowrap;
+    font-size: 24px; font-weight: 900; color: #d9a021; text-shadow: 0 2px 4px rgba(120,80,10,.3);
+    opacity: 0; transform: translateX(-50%) translateY(10px) scale(.5);
+  }
+  .thanks-pop.show { animation: thanksPop 1.7s ease forwards; }
+  @keyframes thanksPop {
+    0% { opacity: 0; transform: translateX(-50%) translateY(12px) scale(.4); }
+    18% { opacity: 1; transform: translateX(-50%) translateY(-4px) scale(1.15); }
+    35% { transform: translateX(-50%) translateY(-8px) scale(1); }
+    80% { opacity: 1; transform: translateX(-50%) translateY(-30px) scale(1); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-48px) scale(1); }
+  }
   .wheel-picked { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
   .wheel-picked .p { font-size: 11px; font-weight: 600; color: var(--faint); background: #f4f5f9; border-radius: 999px; padding: 3px 9px; }
   #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 120; }
@@ -547,6 +562,7 @@
 <div class="wheel-panel" id="wheelPanel">
   <div class="wheel-head">Who's next?<button class="x" id="wheelClose" type="button" aria-label="Закрити">×</button></div>
   <div class="chest-stage">
+    <div class="thanks-pop" id="thanksPop"></div>
     <div class="chest" id="chest">
       <div class="chest-back"><div class="chest-gold"></div><div class="chest-name" id="chestName"></div></div>
       <div class="chest-lid"><span class="band"></span><span class="band"></span></div>
@@ -556,6 +572,7 @@
   <div class="wheel-result" id="wheelResult"></div>
   <div class="wheel-actions">
     <button class="spin" id="wheelSpin" type="button">Крутити</button>
+    <button id="thanksBtn" class="thanks-btn" type="button" title="Подякувати">🙏🏻</button>
     <button id="wheelReset" type="button">Reset</button>
   </div>
   <div class="wheel-picked" id="wheelPicked"></div>
@@ -1175,6 +1192,28 @@
       }
       if (!confRAF) confLoop();
     }
+    const THANKS_EMOJIS = ["💅🏻", "⭐️", "🦾", "👑", "✨", "💸", "🦀", "🐳", "🐘", "⚡️", "🚀"];
+    function fireEmojis(cx, cy) {
+      const canvas = document.getElementById("confetti");
+      canvas.width = innerWidth; canvas.height = innerHeight;
+      for (let i = 0; i < 44; i++) {
+        const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
+        confParticles.push({
+          x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
+          g: 0.1 + Math.random() * 0.06, size: 20 + Math.random() * 14,
+          emoji: THANKS_EMOJIS[Math.floor(Math.random() * THANKS_EMOJIS.length)],
+          rot: (Math.random() - .5) * .6, vr: (Math.random() - .5) * .3, life: 0, max: 85 + Math.random() * 50,
+        });
+      }
+      if (!confRAF) confLoop();
+    }
+    function thanks() {
+      const t = document.getElementById("thanksPop");
+      t.textContent = "Thank youuu!";
+      t.classList.remove("show"); void t.offsetWidth; t.classList.add("show");
+      const rc = chest.getBoundingClientRect();
+      fireEmojis(rc.left + rc.width / 2, rc.top + rc.height / 2 - 10);
+    }
     function confLoop() {
       const canvas = document.getElementById("confetti"), ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1182,9 +1221,9 @@
       for (const p of confParticles) {
         p.life++; p.vy += p.g; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
         ctx.save(); ctx.globalAlpha = Math.max(0, 1 - p.life / p.max);
-        ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.color;
-        if (p.shape === "r") ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-        else { ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, 6.28); ctx.fill(); }
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        if (p.emoji) { ctx.font = p.size + "px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(p.emoji, 0, 0); }
+        else { ctx.fillStyle = p.color; if (p.shape === "r") ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6); else { ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, 6.28); ctx.fill(); } }
         ctx.restore();
       }
       if (confParticles.length) confRAF = requestAnimationFrame(confLoop);
@@ -1196,5 +1235,6 @@
     chest.addEventListener("click", openChest);
     spinBtn.addEventListener("click", openChest);
     resetBtn.addEventListener("click", resetWheel);
+    document.getElementById("thanksBtn").addEventListener("click", thanks);
   })();
 </script>
