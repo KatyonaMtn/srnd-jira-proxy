@@ -116,18 +116,30 @@
   }
 
   /* ---- stage toggles ---- */
-  .stage-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
-  .stg-toggle {
-    display: inline-flex; align-items: center; gap: 6px;
-    font: inherit; font-size: 12px; font-weight: 650; color: var(--ink);
-    background: #fff; border: 1px solid var(--line); border-radius: 999px;
-    padding: 7px 12px; cursor: pointer;
-    transition: color .12s ease, background .12s ease, border-color .12s ease;
+  .stage-dd { position: relative; }
+  .stage-dd-btn { display: inline-flex; align-items: center; gap: 8px; max-width: 230px; }
+  .stage-dd-btn .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 185px; }
+  .stage-dd-btn .caret { color: var(--faint); font-size: 10px; flex: 0 0 auto; }
+  .stage-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; z-index: 40;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 6px;
+    box-shadow: 0 18px 42px -14px rgba(45,50,80,.45); display: none; flex-direction: column; gap: 1px;
+    min-width: 210px; max-height: 340px; overflow: auto;
   }
+  .stage-menu.open { display: flex; }
+  .stg-toggle {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink);
+    background: transparent; border: none; border-radius: 8px; padding: 7px 9px; cursor: pointer; text-align: left;
+  }
+  .stg-toggle:hover { background: #f2f3f7; }
+  .stg-toggle .cbx { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #c4cad8; flex: 0 0 auto; display: grid; place-items: center; }
+  .stg-toggle:not(.off) .cbx { background: var(--sprint); border-color: var(--sprint); }
+  .stg-toggle:not(.off) .cbx::after { content: "✓"; color: #fff; font-size: 10px; font-weight: 800; line-height: 1; }
   .stg-toggle .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
-  .stg-toggle:hover { border-color: #cdd2e0; }
-  .stg-toggle.off { color: var(--faint); background: #f5f6f9; text-decoration: line-through; }
-  .stg-toggle.off .dot { opacity: .3; }
+  .stg-toggle .lbl { flex: 1; }
+  .stg-toggle.off { color: var(--faint); }
+  .stg-toggle.off .dot { opacity: .35; }
   .stg-toggle .badge { font-size: 10.5px; font-weight: 700; opacity: .55; font-variant-numeric: tabular-nums; }
 
   /* ---- people filter pills ---- */
@@ -510,7 +522,10 @@
           <option value="stage">Сорт: стадія</option>
           <option value="priority">Сорт: пріоритет</option>
         </select>
-        <div class="stage-toggles" id="stageToggles"></div>
+        <div class="stage-dd" id="stageDd">
+          <button class="filter stage-dd-btn" id="stageDdBtn" type="button"><span class="lbl" id="stageDdLabel">Статуси</span><span class="caret">▾</span></button>
+          <div class="stage-menu" id="stageToggles"></div>
+        </div>
         <button class="reset" id="refresh" type="button" title="Оновити з Jira">🔄</button>
         <button class="reset" id="reset" type="button">↺ Скинути</button>
       </div>
@@ -758,13 +773,18 @@
   function stageCount(key) { let n = 0; GOALS.forEach(g => g.tasks.forEach(t => { if (t.stage === key) n++; })); return n; }
   function buildStageToggles() {
     stageBar.innerHTML = STAGES.map(s =>
-      `<button class="stg-toggle" type="button" data-stage="${s.key}" title="Показати / сховати">
-        <span class="dot" style="background:${STAGE_COLOR[s.key] || "#999"}"></span>${s.label}
+      `<button class="stg-toggle" type="button" data-stage="${s.key}">
+        <span class="cbx"></span>
+        <span class="dot" style="background:${STAGE_COLOR[s.key] || "#999"}"></span>
+        <span class="lbl">${s.label}</span>
         <span class="badge">${stageCount(s.key)}</span></button>`).join("");
   }
   function syncStageToggles() {
     stageBar.querySelectorAll(".stg-toggle").forEach(b =>
       b.classList.toggle("off", hiddenStages.has(b.dataset.stage)));
+    const on = STAGES.filter(s => !hiddenStages.has(s.key));
+    const lbl = document.getElementById("stageDdLabel");
+    if (lbl) lbl.textContent = on.length === STAGES.length ? "Усі статуси" : (on.length ? on.map(s => s.label).join(", ") : "Нічого");
   }
   stageBar.addEventListener("click", e => {
     const b = e.target.closest(".stg-toggle"); if (!b) return;
@@ -772,6 +792,8 @@
     if (hiddenStages.has(k)) hiddenStages.delete(k); else hiddenStages.add(k);
     saveHidden(); render();
   });
+  document.getElementById("stageDdBtn").addEventListener("click", e => { e.stopPropagation(); stageBar.classList.toggle("open"); });
+  document.addEventListener("click", e => { if (!e.target.closest("#stageDd")) stageBar.classList.remove("open"); });
   buildStageToggles();
 
   async function loadData() {
