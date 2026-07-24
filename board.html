@@ -1166,11 +1166,24 @@
     function fireEmojis(cx, cy) {
       const canvas = document.getElementById("confetti");
       canvas.width = innerWidth; canvas.height = innerHeight;
-      for (let i = 0; i < 44; i++) {
-        const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
-        confParticles.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5, g: 0.1 + Math.random() * 0.06, size: 20 + Math.random() * 14, emoji: THANKS_EMOJIS[Math.floor(Math.random() * THANKS_EMOJIS.length)], rot: (Math.random() - .5) * .6, vr: (Math.random() - .5) * .3, life: 0, max: 85 + Math.random() * 50 });
-      }
-      if (!confRAF) confLoop();
+      let spawned = 0; const total = 40;
+      const wave = () => {
+        for (let k = 0; k < 8 && spawned < total; k++, spawned++) {
+          const a = -Math.PI / 2 + (Math.random() - .5) * 1.7; // м'яко вгору з невеликим розкидом
+          const sp = 1.3 + Math.random() * 2.2;               // повільно
+          confParticles.push({
+            x: cx + (Math.random() - .5) * 34, y: cy + (Math.random() - .5) * 22,
+            vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.4,
+            g: 0.035 + Math.random() * 0.04, size: 18 + Math.random() * 12,
+            emoji: THANKS_EMOJIS[Math.floor(Math.random() * THANKS_EMOJIS.length)],
+            rot: (Math.random() - .5) * .4, vr: (Math.random() - .5) * .14,
+            life: 0, max: 120 + Math.random() * 60,
+          });
+        }
+        if (!confRAF) confLoop();
+        if (spawned < total) setTimeout(wave, 90);
+      };
+      wave();
     }
     function thanks() {
       const t = document.getElementById("thanksPop");
